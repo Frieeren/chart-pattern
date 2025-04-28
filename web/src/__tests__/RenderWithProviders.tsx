@@ -3,7 +3,7 @@ import { render } from "@testing-library/react";
 import { HomePage } from "@web/pages/HomePage";
 import { RQProvider } from "@web/shared/providers/RQProvider";
 
-export function renderWithProviders({ route = "/" } = {}) {
+export function RenderWithProviders({ route = "/" } = {}) {
   // https://testing-library.com/docs/example-react-router/
   const router = createMemoryRouter(
     [
