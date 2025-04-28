@@ -23,7 +23,14 @@
     "noUncheckedSideEffectImports": true,
 
     /* Types */
-    "types": ["vite-plugin-svgr/client"]
+    "types": ["vite-plugin-svgr/client"],
+
+    /* Path Alias */
+     "baseUrl": "src",
+     "paths": {
+      "@web/*": ["*"]
+    }
   },
-  "include": ["src", "src/App.tsx"]
+  "include": ["src"],
+  "exclude": ["node_modules"]
 }
