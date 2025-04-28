@@ -1,7 +1,12 @@
 import { AppRouterProvider } from "@web/shared/providers/RouterProvider";
+import { RQProvider } from "@web/shared/providers/RQProvider";
 
 function App() {
-  return <AppRouterProvider />;
+  return (
+    <RQProvider>
+      <AppRouterProvider />
+    </RQProvider>
+  );
 }
 
 export default App;
