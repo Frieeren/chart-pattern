@@ -1,16 +1,16 @@
-import { HomePage } from "@web/pages/HomePage";
-import { createBrowserRouter, RouterProvider } from "react-router";
+import { MainPage } from '@web/pages/main/MainPage';
+import { RouterProvider, createBrowserRouter } from 'react-router';
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: '/',
     children: [
       {
         index: true,
-        element: <HomePage />,
+        element: <MainPage />,
       },
       {
-        path: "*",
+        path: '*',
         element: <div>Not Found</div>,
       },
     ],

@@ -1,5 +1,5 @@
-import { globalStyle } from "@vanilla-extract/css";
-import * as layers from "./layers.css.ts";
+import { globalStyle } from '@vanilla-extract/css';
+import * as layers from './layers.css.ts';
 
 /**
  * 프로젝트 기본 스타일
@@ -13,6 +13,6 @@ globalStyle(':root', {
       textRendering: 'optimizeLegibility',
       WebkitFontSmoothing: 'antialiased',
       MozOsxFontSmoothing: 'grayscale',
-    }
-  }
+    },
+  },
 });
