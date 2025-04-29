@@ -22,13 +22,13 @@ export function useFilter<T>(initialValue: T, validator: (value: unknown) => Val
     [validator]
   );
 
-  return { value, updateValue, error, setError };
+  return { value, updateValue, error };
 }
 
 export const useFilters = () => {
   const {
     value: timeframe,
-    updateValue: setTimeframe,
+    updateValue: onChangeTimeframe,
     error: timeframeError,
   } = useFilter<TimeframeOption>(DEFAULT_TIMEFRAME as TimeframeOption, safeValidateTimeframe);
 
@@ -80,11 +80,11 @@ export const useFilters = () => {
 
   return {
     timeframe,
-    setTimeframe,
+    onChangeTimeframe,
     timeframeError,
     symbolId,
     symbol,
-    updateSymbolId,
+    onChangeSymbol: updateSymbolId,
     symbolError,
     symbols,
     hasErrors: !!timeframeError || !!symbolError,

@@ -9,7 +9,7 @@ import { chartArea, container, filterArea, listArea } from './style.css';
 
 export function MainPage() {
   const chartItems: ChartItem[] = SAMPLE_CHARTS;
-  const { timeframe, setTimeframe, timeframeError, symbolId, symbol, updateSymbolId, symbolError, symbols } =
+  const { timeframe, onChangeTimeframe, timeframeError, symbolId, symbol, onChangeSymbol, symbolError, symbols } =
     useFilters();
 
   return (
@@ -17,10 +17,10 @@ export function MainPage() {
       <div className={filterArea}>
         <FilterView
           timeframe={timeframe}
-          onChangeTimeframe={setTimeframe}
+          onChangeTimeframe={onChangeTimeframe}
           timeframeError={timeframeError}
           symbolId={symbolId}
-          onChangeSymbol={updateSymbolId}
+          onChangeSymbol={onChangeSymbol}
           symbolError={symbolError}
           symbols={symbols}
         />
