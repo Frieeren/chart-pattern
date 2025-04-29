@@ -7,7 +7,7 @@ export const chartListSection = style({
   padding: '16px',
   overflowY: 'auto',
   height: '100%',
-  color: '#e0e0e0'
+  color: '#e0e0e0',
 });
 
 export const chartCard = style({

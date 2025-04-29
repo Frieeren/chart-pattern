@@ -1,8 +1,8 @@
-import ky, { HTTPError } from "ky";
-import { BaseError } from "../exception/BaseError";
-import { BadRequestError, InternetServerError, NotFoundError } from "../exception/APIError";
+import ky, { HTTPError } from 'ky';
+import { BadRequestError, InternetServerError, NotFoundError } from '../exception/APIError';
+import { BaseError } from '../exception/BaseError';
 
-const baseURL = "http://localhost:3000";
+const baseURL = 'http://localhost:3000';
 const TIMEOUT = 60000;
 
 type HttpRequestMethod = 'get' | 'post' | 'patch' | 'put' | 'delete';
@@ -17,12 +17,12 @@ export class Http {
   private instance = ky.create({
     prefixUrl: baseURL,
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     timeout: TIMEOUT,
     hooks: {
       beforeError: [
-        async (error) => {
+        async error => {
           if (error instanceof HTTPError) {
             const { response } = error;
             const status = response.status;
@@ -33,26 +33,26 @@ export class Http {
             } catch (e) {
               return error;
             }
-            
-            const message = 
-              typeof data === "object" && data !== null && "message" in data ? String(data.message) : null;
-            
+
+            const message =
+              typeof data === 'object' && data !== null && 'message' in data ? String(data.message) : null;
+
             switch (status) {
               case 400:
-                throw new BadRequestError(message || "Bad Request");
+                throw new BadRequestError(message || 'Bad Request');
               case 404:
-                throw new NotFoundError(message || "Not Found");
+                throw new NotFoundError(message || 'Not Found');
               case 500:
-                throw new InternetServerError(message || "Internal Server Error");
+                throw new InternetServerError(message || 'Internal Server Error');
               default:
-                throw new BaseError(status, message || "An error occurred");
+                throw new BaseError(status, message || 'An error occurred');
             }
           }
-          
+
           return error;
-        }
-      ]
-    }
+        },
+      ],
+    },
   });
 
   async get<T>(path: string, options?: Omit<HttpRequestOptions, 'json'>): Promise<T> {
@@ -77,7 +77,7 @@ export class Http {
 
   private async request<T>(method: HttpRequestMethod, path: string, options?: HttpRequestOptions): Promise<T> {
     const kyOptions = this.parseRequestOptions(options);
-    
+
     try {
       const response = await this.instance[method](path, kyOptions);
       return await response.json<T>();
@@ -94,21 +94,21 @@ export class Http {
 
   private parseRequestOptions(options?: HttpRequestOptions): Record<string, unknown> {
     if (!options) return {};
-    
+
     const result: Record<string, unknown> = {};
-    
+
     if (options.json !== undefined) {
       result.json = options.json;
     }
-    
+
     if (options.searchParams) {
       result.searchParams = options.searchParams;
     }
-    
+
     if (options.headers) {
       result.headers = options.headers;
     }
-    
+
     return result;
   }
 }

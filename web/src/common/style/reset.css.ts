@@ -10,17 +10,14 @@ import * as layers from './layers.css.ts';
  * - "html" 요소는 제외되며, 그렇지 않으면 Chrome에서 CSS 하이픈(hyphens) 속성이 망가지는 버그가 발생합니다.
  *   (https://github.com/elad2412/the-new-css-reset/issues/36).
  */
-globalStyle(
-  '*:where(:not(html, iframe, canvas, img, svg, video, audio):not(svg *, symbol *))',
-  {
-    '@layer': {
-      [layers.reset]: {
-        all: 'unset',
-        display: 'revert',
-      },
+globalStyle('*:where(:not(html, iframe, canvas, img, svg, video, audio):not(svg *, symbol *))', {
+  '@layer': {
+    [layers.reset]: {
+      all: 'unset',
+      display: 'revert',
     },
-  }
-);
+  },
+});
 
 /**
  * 기본 box-sizing border-box로 설정

@@ -1,18 +1,13 @@
-import type { 
-  TimeframeOption, 
-  SymbolOption 
-} from '@web/shared/types/domain';
-import { 
-  TIMEFRAME_OPTIONS 
-} from '@web/shared/constants/filter';
+import { TIMEFRAME_OPTIONS } from '@web/shared/constants/filter';
+import type { SymbolOption, TimeframeOption } from '@web/shared/types/domain';
 import {
-  filterSection,
-  filterTitle,
+  emptyMessage,
+  errorMessage,
   filterItem,
   filterLabel,
+  filterSection,
   filterSelect,
-  errorMessage,
-  emptyMessage
+  filterTitle,
 } from './style.css';
 
 interface FilterSelectProps {
@@ -23,31 +18,17 @@ interface FilterSelectProps {
   error?: string | null;
 }
 
-function FilterSelect({ 
-  label, 
-  options, 
-  value, 
-  onChange,
-  error
-}: FilterSelectProps) {
+function FilterSelect({ label, options, value, onChange, error }: FilterSelectProps) {
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     onChange(e.target.value);
   };
 
   return (
     <div className={filterItem}>
-      <label 
-        htmlFor={`${label}-select`}
-        className={filterLabel}
-      >
+      <label htmlFor={`${label}-select`} className={filterLabel}>
         {label}
       </label>
-      <select 
-        id={`${label}-select`}
-        className={filterSelect}
-        value={value.toString()}
-        onChange={handleChange}
-      >
+      <select id={`${label}-select`} className={filterSelect} value={value.toString()} onChange={handleChange}>
         {options.map(option => (
           <option key={option.value} value={option.value.toString()}>
             {option.label}
@@ -67,13 +48,7 @@ interface SymbolSelectProps {
   error?: string | null;
 }
 
-function SymbolSelect({
-  label,
-  symbols,
-  selectedSymbolId,
-  onSelectSymbol,
-  error
-}: SymbolSelectProps) {
+function SymbolSelect({ label, symbols, selectedSymbolId, onSelectSymbol, error }: SymbolSelectProps) {
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
     onSelectSymbol(value || null);
@@ -81,10 +56,7 @@ function SymbolSelect({
 
   return (
     <div className={filterItem}>
-      <label 
-        htmlFor={`${label}-select`}
-        className={filterLabel}
-      >
+      <label htmlFor={`${label}-select`} className={filterLabel}>
         {label}
       </label>
       {symbols.length > 0 ? (
@@ -128,12 +100,12 @@ export const FilterView: React.FC<FilterViewProps> = ({
   symbolId,
   onChangeSymbol,
   symbolError,
-  symbols
+  symbols,
 }) => {
   return (
     <div className={filterSection}>
       <h3 className={filterTitle}>Filtering</h3>
-      
+
       <FilterSelect
         label="기간 설정"
         options={TIMEFRAME_OPTIONS}
@@ -141,7 +113,7 @@ export const FilterView: React.FC<FilterViewProps> = ({
         onChange={onChangeTimeframe}
         error={timeframeError}
       />
-      
+
       <SymbolSelect
         label="종목 설정"
         symbols={symbols}

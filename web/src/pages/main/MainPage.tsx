@@ -1,29 +1,16 @@
-import { useFilters } from './hooks/useFilters';
-import { FilterView } from './components/FilterView';
-import { ChartView } from './components/ChartView';
-import { ChartListView } from './components/ChartListView';
-import type { ChartItem } from '@web/shared/types/domain';
 import { themeClass } from '@web/common/style/theme.css';
 import { SAMPLE_CHARTS } from '@web/shared/constants/filter';
-import {
-  container,
-  filterArea,
-  chartArea,
-  listArea,
-} from './style.css';
+import type { ChartItem } from '@web/shared/types/domain';
+import { ChartListView } from './components/ChartListView';
+import { ChartView } from './components/ChartView';
+import { FilterView } from './components/FilterView';
+import { useFilters } from './hooks/useFilters';
+import { chartArea, container, filterArea, listArea } from './style.css';
 
 export function MainPage() {
   const chartItems: ChartItem[] = SAMPLE_CHARTS;
-  const { 
-    timeframe, 
-    setTimeframe, 
-    timeframeError,
-    symbolId,
-    symbol,
-    updateSymbolId,
-    symbolError,
-    symbols,
-  } = useFilters();
+  const { timeframe, setTimeframe, timeframeError, symbolId, symbol, updateSymbolId, symbolError, symbols } =
+    useFilters();
 
   return (
     <div className={`${themeClass} ${container}`}>
@@ -38,21 +25,16 @@ export function MainPage() {
           symbols={symbols}
         />
       </div>
-      
+
       <div className={chartArea}>
-        <ChartView
-          timeframe={timeframe} 
-          symbol={symbol}
-        />
+        <ChartView timeframe={timeframe} symbol={symbol} />
       </div>
-      
+
       <div className={listArea}>
-        <ChartListView
-          chartItems={chartItems}
-        />
+        <ChartListView chartItems={chartItems} />
       </div>
     </div>
-  )
+  );
 }
 
 export default MainPage;

@@ -7,7 +7,7 @@ export const chartViewSection = style({
   justifyContent: 'center',
   alignItems: 'center',
   height: '100%',
-  color: '#e0e0e0'
+  color: '#e0e0e0',
 });
 
 export const infoBox = style({
@@ -24,7 +24,7 @@ export const timeframeInfo = style([
   {
     backgroundColor: '#000',
     color: '#fff',
-  }
+  },
 ]);
 
 export const symbolInfo = style([
@@ -32,7 +32,7 @@ export const symbolInfo = style([
   {
     backgroundColor: '#000',
     color: '#fff',
-  }
+  },
 ]);
 
 export const noSymbolMessage = style([
@@ -40,5 +40,5 @@ export const noSymbolMessage = style([
   {
     backgroundColor: 'rgba(255, 152, 0, 0.1)',
     color: '#ff9800',
-  }
+  },
 ]);

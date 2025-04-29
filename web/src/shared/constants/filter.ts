@@ -1,4 +1,4 @@
-import type { ChartItem, FilterOption, SymbolOption } from "../types/domain";
+import type { ChartItem, FilterOption, SymbolOption } from '../types/domain';
 
 export const SAMPLE_SYMBOLS: SymbolOption[] = [
   { id: 'btc', name: '비트코인', code: 'BTC-KRW' },
@@ -8,7 +8,7 @@ export const SAMPLE_SYMBOLS: SymbolOption[] = [
 
 export const SYMBOL_OPTIONS: FilterOption[] = SAMPLE_SYMBOLS.map(symbol => ({
   value: symbol.id,
-  label: `${symbol.name} (${symbol.code})`
+  label: `${symbol.name} (${symbol.code})`,
 }));
 
 export const SAMPLE_CHARTS: ChartItem[] = [
@@ -30,6 +30,4 @@ export const TIMEFRAME_OPTIONS: FilterOption[] = [
 
 export const DEFAULT_TIMEFRAME = '1h';
 
-export const DEFAULT_SYMBOL = SYMBOL_OPTIONS.length > 0 
-  ? SYMBOL_OPTIONS[0].value 
-  : null;
+export const DEFAULT_SYMBOL = SYMBOL_OPTIONS.length > 0 ? SYMBOL_OPTIONS[0].value : null;

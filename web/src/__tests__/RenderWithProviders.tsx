@@ -1,21 +1,21 @@
-import { createMemoryRouter, RouterProvider } from "react-router";
-import { render } from "@testing-library/react";
-import { MainPage } from "@web/pages/main/MainPage";
-import { RQProvider } from "@web/shared/providers/RQProvider";
+import { render } from '@testing-library/react';
+import { MainPage } from '@web/pages/main/MainPage';
+import { RQProvider } from '@web/shared/providers/RQProvider';
+import { RouterProvider, createMemoryRouter } from 'react-router';
 
-export function RenderWithProviders({ route = "/" } = {}) {
+export function RenderWithProviders({ route = '/' } = {}) {
   // https://testing-library.com/docs/example-react-router/
   const router = createMemoryRouter(
     [
       {
-        path: "/",
+        path: '/',
         children: [
           {
             index: true,
             element: <MainPage />,
           },
           {
-            path: "*",
+            path: '*',
             element: <div>Not Found</div>,
           },
         ],

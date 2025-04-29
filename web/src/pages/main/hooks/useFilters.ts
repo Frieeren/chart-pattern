@@ -1,49 +1,37 @@
+import { DEFAULT_SYMBOL, DEFAULT_TIMEFRAME, SAMPLE_SYMBOLS } from '@web/shared/constants/filter';
+import type { SymbolOption, TimeframeOption } from '@web/shared/types/domain';
+import { type ValidationResult, safeValidateSymbolId, safeValidateTimeframe } from '@web/shared/utils/validator';
+import { useCallback, useEffect, useState } from 'react';
 
-import { useState, useCallback, useEffect } from 'react';
-import type { 
-  TimeframeOption, 
-  SymbolOption 
-} from '@web/shared/types/domain';
-import { 
-  DEFAULT_TIMEFRAME, 
-  DEFAULT_SYMBOL, 
-  SAMPLE_SYMBOLS 
-} from '@web/shared/constants/filter';
-import { 
-  safeValidateTimeframe, 
-  safeValidateSymbolId,
-  type ValidationResult 
-} from '@web/shared/utils/validator';
-
-export function useFilter<T>(
-  initialValue: T,
-  validator: (value: unknown) => ValidationResult<T>
-) {
+export function useFilter<T>(initialValue: T, validator: (value: unknown) => ValidationResult<T>) {
   const [value, setValue] = useState<T>(initialValue);
   const [error, setError] = useState<string | null>(null);
-  
-  const updateValue = useCallback((newValue: unknown) => {
-    const result = validator(newValue);
-    
-    if (result.success) {
-      setValue(result.data);
-      setError(null);
-      return true;
-    }
-    setError(result.error);
-    return false;
-  }, [validator]);
-  
+
+  const updateValue = useCallback(
+    (newValue: unknown) => {
+      const result = validator(newValue);
+
+      if (result.success) {
+        setValue(result.data);
+        setError(null);
+        return true;
+      }
+      setError(result.error);
+      return false;
+    },
+    [validator]
+  );
+
   return { value, updateValue, error, setError };
 }
 
 export const useFilters = () => {
-  const { 
-    value: timeframe, 
+  const {
+    value: timeframe,
     updateValue: setTimeframe,
-    error: timeframeError
+    error: timeframeError,
   } = useFilter<TimeframeOption>(DEFAULT_TIMEFRAME as TimeframeOption, safeValidateTimeframe);
-  
+
   const [symbolId, setSymbolId] = useState<string | number | null>(DEFAULT_SYMBOL);
   const [symbol, setSymbol] = useState<SymbolOption | null>(null);
   const [symbolError, setSymbolError] = useState<string | null>(null);
@@ -52,9 +40,12 @@ export const useFilters = () => {
    */
   const symbols: SymbolOption[] = SAMPLE_SYMBOLS;
 
-  const findSymbolById = useCallback((id: string | number): SymbolOption | null => {
-    return symbols.find(s => s.id === id) || null;
-  }, [symbols]);
+  const findSymbolById = useCallback(
+    (id: string | number): SymbolOption | null => {
+      return symbols.find(s => s.id === id) || null;
+    },
+    [symbols]
+  );
 
   useEffect(() => {
     if (symbolId) {
@@ -77,7 +68,7 @@ export const useFilters = () => {
       setSymbolId(null);
       return true;
     }
-    
+
     const result = safeValidateSymbolId(id);
     if (result.success) {
       setSymbolId(result.data);
@@ -96,6 +87,6 @@ export const useFilters = () => {
     updateSymbolId,
     symbolError,
     symbols,
-    hasErrors: !!timeframeError || !!symbolError
+    hasErrors: !!timeframeError || !!symbolError,
   };
 };

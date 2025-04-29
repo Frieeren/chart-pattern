@@ -22,7 +22,7 @@ export const filterArea = style([
   {
     gridColumn: '1 / 2',
     gridRow: '1 / 2',
-  }
+  },
 ]);
 
 export const chartArea = style([
@@ -30,7 +30,7 @@ export const chartArea = style([
   {
     gridColumn: '1 / 2',
     gridRow: '2 / 3',
-  }
+  },
 ]);
 
 export const listArea = style([
@@ -38,7 +38,7 @@ export const listArea = style([
   {
     gridColumn: '2 / 3',
     gridRow: '1 / 3',
-  }
+  },
 ]);
 
 export const errorMessage = style({

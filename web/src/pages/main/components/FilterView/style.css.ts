@@ -2,7 +2,7 @@ import { style } from '@vanilla-extract/css';
 
 export const filterSection = style({
   padding: '16px',
-  color: '#e0e0e0'
+  color: '#e0e0e0',
 });
 
 export const filterTitle = style({
