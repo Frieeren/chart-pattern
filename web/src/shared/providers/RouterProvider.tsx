@@ -1,4 +1,4 @@
-import { HomePage } from "@web/pages/HomePage";
+import { MainPage } from "@web/pages/main/MainPage";
 import { createBrowserRouter, RouterProvider } from "react-router";
 
 const router = createBrowserRouter([
@@ -7,7 +7,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <HomePage />,
+        element: <MainPage />,
       },
       {
         path: "*",

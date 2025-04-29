@@ -1,6 +1,6 @@
 import { createMemoryRouter, RouterProvider } from "react-router";
 import { render } from "@testing-library/react";
-import { HomePage } from "@web/pages/HomePage";
+import { MainPage } from "@web/pages/main/MainPage";
 import { RQProvider } from "@web/shared/providers/RQProvider";
 
 export function RenderWithProviders({ route = "/" } = {}) {
@@ -12,7 +12,7 @@ export function RenderWithProviders({ route = "/" } = {}) {
         children: [
           {
             index: true,
-            element: <HomePage />,
+            element: <MainPage />,
           },
           {
             path: "*",
