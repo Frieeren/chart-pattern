@@ -1,5 +1,5 @@
-import { TIMEFRAME_OPTIONS } from '@web/shared/constants/filter';
-import type { SymbolOption, TimeframeOption } from '@web/shared/types/domain';
+import { INTERVAL_OPTIONS } from '@web/shared/constants/filter';
+import type { IntervalOption, SymbolOption } from '@web/shared/types/domain';
 import {
   emptyMessage,
   errorMessage,
@@ -84,9 +84,9 @@ function SymbolSelect({ label, symbols, selectedSymbolId, onSelectSymbol, error 
 }
 
 interface FilterViewProps {
-  timeframe: TimeframeOption;
-  onChangeTimeframe: (value: unknown) => void;
-  timeframeError?: string | null;
+  interval: IntervalOption;
+  onChangeInterval: (value: unknown) => void;
+  intervalError?: string | null;
   symbolId: string | number | null;
   onChangeSymbol: (value: unknown) => void;
   symbolError?: string | null;
@@ -94,9 +94,9 @@ interface FilterViewProps {
 }
 
 export const FilterView: React.FC<FilterViewProps> = ({
-  timeframe,
-  onChangeTimeframe,
-  timeframeError,
+  interval,
+  onChangeInterval,
+  intervalError,
   symbolId,
   onChangeSymbol,
   symbolError,
@@ -108,10 +108,10 @@ export const FilterView: React.FC<FilterViewProps> = ({
 
       <FilterSelect
         label="기간 설정"
-        options={TIMEFRAME_OPTIONS}
-        value={timeframe}
-        onChange={onChangeTimeframe}
-        error={timeframeError}
+        options={INTERVAL_OPTIONS}
+        value={interval}
+        onChange={onChangeInterval}
+        error={intervalError}
       />
 
       <SymbolSelect
