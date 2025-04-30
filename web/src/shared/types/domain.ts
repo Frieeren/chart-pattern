@@ -1,7 +1,10 @@
 import { z } from 'zod';
 
-export const timeframeSchema = z.enum(['5m', '15m', '30m', '1h', '4h', '6h', '12h', '24h']);
-export type TimeframeOption = z.infer<typeof timeframeSchema>;
+export const intervalSchema = z.enum(['1', '3', '5', '15', '30', '60', '120', '180', '240', 'D', 'W']);
+export type IntervalOption = z.infer<typeof intervalSchema>;
+
+export const rangeSchema = z.enum(['1D', '5D', '1M', '3M', '6M', 'YTD', '12M', '60M', 'ALL']);
+export type RangeOption = z.infer<typeof rangeSchema>;
 
 export const symbolSchema = z.object({
   id: z.union([z.number(), z.string()]),
