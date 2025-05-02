@@ -1,5 +1,7 @@
 import { INTERVAL_OPTIONS } from '@web/shared/constants/filter';
 import type { IntervalOption, SymbolOption } from '@web/shared/types/domain';
+import { useTranslation } from 'react-i18next';
+
 import {
   emptyMessage,
   errorMessage,
@@ -49,6 +51,8 @@ interface SymbolSelectProps {
 }
 
 function SymbolSelect({ label, symbols, selectedSymbolId, onSelectSymbol, error }: SymbolSelectProps) {
+  const { t } = useTranslation();
+
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
     onSelectSymbol(value || null);
@@ -67,7 +71,7 @@ function SymbolSelect({ label, symbols, selectedSymbolId, onSelectSymbol, error 
             value={selectedSymbolId?.toString() || ''}
             onChange={handleChange}
           >
-            <option value="">종목 선택</option>
+            <option value="">{t('filter.selectSymbol')}</option>
             {symbols.map(symbol => (
               <option key={symbol.id} value={symbol.id.toString()}>
                 {symbol.name} ({symbol.code})
@@ -77,7 +81,7 @@ function SymbolSelect({ label, symbols, selectedSymbolId, onSelectSymbol, error 
           {error && <div className={errorMessage}>{error}</div>}
         </>
       ) : (
-        <div className={emptyMessage}>선택 가능한 종목이 없습니다.</div>
+        <div className={emptyMessage}>{t('filter.noSymbol')}</div>
       )}
     </div>
   );
@@ -102,12 +106,13 @@ export const FilterView: React.FC<FilterViewProps> = ({
   symbolError,
   symbols,
 }) => {
+  const { t } = useTranslation();
   return (
     <div className={filterSection}>
-      <h3 className={filterTitle}>Filtering</h3>
+      <h3 className={filterTitle}>{t('filter.title')}</h3>
 
       <FilterSelect
-        label="기간 설정"
+        label={t('filter.interval')}
         options={INTERVAL_OPTIONS}
         value={interval}
         onChange={onChangeInterval}
@@ -115,7 +120,7 @@ export const FilterView: React.FC<FilterViewProps> = ({
       />
 
       <SymbolSelect
-        label="종목 설정"
+        label={t('filter.symbol')}
         symbols={symbols}
         selectedSymbolId={symbolId}
         onSelectSymbol={onChangeSymbol}

@@ -1,4 +1,5 @@
 import type { ChartItem } from '@web/shared/types/domain';
+import { useTranslation } from 'react-i18next';
 import { chartCard, chartCardHeader, chartCardTitle, chartListSection, chartPreview, emptyMessage } from './style.css';
 
 interface ChartCardProps {
@@ -21,6 +22,8 @@ interface ChartListViewProps {
 }
 
 export const ChartListView: React.FC<ChartListViewProps> = ({ chartItems }) => {
+  const { t } = useTranslation();
+
   return (
     <div className={chartListSection}>
       {chartItems.length > 0 ? (
@@ -30,7 +33,7 @@ export const ChartListView: React.FC<ChartListViewProps> = ({ chartItems }) => {
           ))}
         </>
       ) : (
-        <div className={emptyMessage}>유사한 차트가 존재하지 않습니다.</div>
+        <div className={emptyMessage}>{t('chartList.noChart')}</div>
       )}
     </div>
   );
