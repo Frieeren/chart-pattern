@@ -9,16 +9,16 @@ import { chartArea, container, filterArea, listArea } from './style.css';
 
 export function MainPage() {
   const chartItems: ChartItem[] = SAMPLE_CHARTS;
-  const { timeframe, onChangeTimeframe, timeframeError, symbolId, symbol, onChangeSymbol, symbolError, symbols } =
+  const { interval, onChangeInterval, intervalError, symbolId, symbol, onChangeSymbol, symbolError, symbols } =
     useFilters();
 
   return (
     <div className={`${themeClass} ${container}`}>
       <div className={filterArea}>
         <FilterView
-          timeframe={timeframe}
-          onChangeTimeframe={onChangeTimeframe}
-          timeframeError={timeframeError}
+          interval={interval}
+          onChangeInterval={onChangeInterval}
+          intervalError={intervalError}
           symbolId={symbolId}
           onChangeSymbol={onChangeSymbol}
           symbolError={symbolError}
@@ -27,7 +27,7 @@ export function MainPage() {
       </div>
 
       <div className={chartArea}>
-        <ChartView timeframe={timeframe} symbol={symbol} />
+        <ChartView interval={interval} symbol={symbol} />
       </div>
 
       <div className={listArea}>

@@ -1,21 +1,21 @@
 import {
   type ChartItem,
+  type IntervalOption,
   type SymbolOption,
-  type TimeframeOption,
   chartItemSchema,
+  intervalSchema,
   symbolSchema,
-  timeframeSchema,
 } from '../types/domain';
 
 export type ValidationResult<T> = { success: true; data: T } | { success: false; error: string };
 
-export const validateTimeframe = (input: unknown): TimeframeOption => {
-  return timeframeSchema.parse(input);
+export const validateInterval = (input: unknown): IntervalOption => {
+  return intervalSchema.parse(input);
 };
 
-export const safeValidateTimeframe = (input: unknown): ValidationResult<TimeframeOption> => {
+export const safeValidateInterval = (input: unknown): ValidationResult<IntervalOption> => {
   try {
-    const data = validateTimeframe(input);
+    const data = validateInterval(input);
     return { success: true, data };
   } catch (error) {
     return {

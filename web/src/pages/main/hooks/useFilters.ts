@@ -1,6 +1,6 @@
-import { DEFAULT_SYMBOL, DEFAULT_TIMEFRAME, SAMPLE_SYMBOLS } from '@web/shared/constants/filter';
-import type { SymbolOption, TimeframeOption } from '@web/shared/types/domain';
-import { type ValidationResult, safeValidateSymbolId, safeValidateTimeframe } from '@web/shared/utils/validator';
+import { DEFAULT_INTERVAL, DEFAULT_SYMBOL, SAMPLE_SYMBOLS } from '@web/shared/constants/filter';
+import type { IntervalOption, SymbolOption } from '@web/shared/types/domain';
+import { type ValidationResult, safeValidateInterval, safeValidateSymbolId } from '@web/shared/utils/validator';
 import { useCallback, useEffect, useState } from 'react';
 
 export function useFilter<T>(initialValue: T, validator: (value: unknown) => ValidationResult<T>) {
@@ -27,10 +27,10 @@ export function useFilter<T>(initialValue: T, validator: (value: unknown) => Val
 
 export const useFilters = () => {
   const {
-    value: timeframe,
-    updateValue: onChangeTimeframe,
-    error: timeframeError,
-  } = useFilter<TimeframeOption>(DEFAULT_TIMEFRAME as TimeframeOption, safeValidateTimeframe);
+    value: interval,
+    updateValue: onChangeInterval,
+    error: intervalError,
+  } = useFilter<IntervalOption>(DEFAULT_INTERVAL as IntervalOption, safeValidateInterval);
 
   const [symbolId, setSymbolId] = useState<string | number | null>(DEFAULT_SYMBOL);
   const [symbol, setSymbol] = useState<SymbolOption | null>(null);
@@ -79,14 +79,14 @@ export const useFilters = () => {
   }, []);
 
   return {
-    timeframe,
-    onChangeTimeframe,
-    timeframeError,
+    interval,
+    onChangeInterval,
+    intervalError,
     symbolId,
     symbol,
     onChangeSymbol: updateSymbolId,
     symbolError,
     symbols,
-    hasErrors: !!timeframeError || !!symbolError,
+    hasErrors: !!intervalError || !!symbolError,
   };
 };
