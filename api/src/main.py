@@ -2,10 +2,11 @@ from fastapi import FastAPI
 
 app = FastAPI()
 
+
 @app.get("/")
 async def root():
   return {
-    "message": "Hello World from FastAPI123123123123123123123123123123123123",
-    "test": "!@#",
-    "test2": "!@#",
+    "message": "ruff, pre-commit test",
+    "ruff": "install ruff",
+    "pre-commit": "install pre-commit",
   }
