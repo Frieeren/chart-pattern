@@ -5,112 +5,108 @@ import { BaseError } from '../exception/BaseError';
 const baseURL = 'http://localhost:3000';
 const TIMEOUT = 60000;
 
-type HttpRequestMethod = 'get' | 'post' | 'patch' | 'put' | 'delete';
+type HttpRequestMethod = 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE';
 
 interface HttpRequestOptions {
-  json?: unknown;
+  method?: HttpRequestMethod;
+  json?: any;
   searchParams?: Record<string, string | string[] | undefined>;
   headers?: Record<string, string | undefined>;
 }
 
-export class Http {
-  private instance = ky.create({
-    prefixUrl: baseURL,
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    timeout: TIMEOUT,
-    hooks: {
-      beforeError: [
-        async error => {
-          if (error instanceof HTTPError) {
-            const { response } = error;
-            const status = response.status;
+const instance = ky.create({
+  prefixUrl: baseURL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  timeout: TIMEOUT,
+  hooks: {
+    beforeError: [
+      async error => {
+        if (error instanceof HTTPError) {
+          const { response } = error;
+          const status = response.status;
 
-            let data: unknown;
-            try {
-              data = await response.json();
-            } catch (e) {
-              return error;
-            }
-
-            const message =
-              typeof data === 'object' && data !== null && 'message' in data ? String(data.message) : null;
-
-            switch (status) {
-              case 400:
-                throw new BadRequestError(message || 'Bad Request');
-              case 404:
-                throw new NotFoundError(message || 'Not Found');
-              case 500:
-                throw new InternetServerError(message || 'Internal Server Error');
-              default:
-                throw new BaseError(status, message || 'An error occurred');
-            }
+          let data: unknown;
+          try {
+            data = await response.json();
+          } catch (e) {
+            return error;
           }
 
-          return error;
-        },
-      ],
-    },
-  });
+          const message = typeof data === 'object' && data !== null && 'message' in data ? String(data.message) : null;
 
-  async get<T>(path: string, options?: Omit<HttpRequestOptions, 'json'>): Promise<T> {
-    return this.request<T>('get', path, options);
+          switch (status) {
+            case 400:
+              throw new BadRequestError(message || 'Bad Request');
+            case 404:
+              throw new NotFoundError(message || 'Not Found');
+            case 500:
+              throw new InternetServerError(message || 'Internal Server Error');
+            default:
+              throw new BaseError(status, message || 'An error occurred');
+          }
+        }
+
+        return error;
+      },
+    ],
+  },
+});
+
+const parseResponse = async <T>(response: Response): Promise<T> => {
+  const contentType = response.headers.get('content-type');
+  const jsonParseAvailable = contentType && /json/.test(contentType);
+
+  return (jsonParseAvailable ? await response.json() : await response.text()) as T;
+};
+
+export const http = async <T>(url: string, options: HttpRequestOptions = {}): Promise<T> => {
+  const kyOptions: Record<string, unknown> = {};
+
+  if (options.method) {
+    kyOptions.method = options.method;
   }
 
-  async post<T>(path: string, options?: HttpRequestOptions): Promise<T> {
-    return this.request<T>('post', path, options);
+  if (options.headers) {
+    kyOptions.headers = options.headers;
   }
 
-  async patch<T>(path: string, options?: HttpRequestOptions): Promise<T> {
-    return this.request<T>('patch', path, options);
+  if (options.searchParams) {
+    kyOptions.searchParams = options.searchParams;
   }
 
-  async put<T>(path: string, options?: HttpRequestOptions): Promise<T> {
-    return this.request<T>('put', path, options);
+  if (options.json) {
+    kyOptions.json = options.json;
   }
 
-  async delete<T>(path: string, options?: HttpRequestOptions): Promise<T> {
-    return this.request<T>('delete', path, options);
-  }
-
-  private async request<T>(method: HttpRequestMethod, path: string, options?: HttpRequestOptions): Promise<T> {
-    const kyOptions = this.parseRequestOptions(options);
-
-    try {
-      const response = await this.instance[method](path, kyOptions);
-      return await response.json<T>();
-    } catch (error) {
-      if (error instanceof HTTPError) {
-        throw error;
-      }
-      if (error instanceof BaseError) {
-        throw error;
-      }
-      throw new Error(`Request failed: ${(error as Error).message}`);
+  try {
+    const response = await instance(url, kyOptions);
+    return parseResponse<T>(response);
+  } catch (error) {
+    if (error instanceof HTTPError || error instanceof BaseError) {
+      throw error;
     }
+    throw new Error(`Request failed: ${(error as Error).message}`);
   }
+};
 
-  private parseRequestOptions(options?: HttpRequestOptions): Record<string, unknown> {
-    if (!options) return {};
+http.get = async <T>(path: string, options?: Omit<HttpRequestOptions, 'method' | 'json'>): Promise<T> => {
+  return http<T>(path, { ...options, method: 'GET' });
+};
 
-    const result: Record<string, unknown> = {};
+http.post = async <T>(path: string, json?: any, options?: Omit<HttpRequestOptions, 'method' | 'json'>): Promise<T> => {
+  return http<T>(path, { ...options, method: 'POST', json });
+};
 
-    if (options.json !== undefined) {
-      result.json = options.json;
-    }
+http.patch = async <T>(path: string, json?: any, options?: Omit<HttpRequestOptions, 'method' | 'json'>): Promise<T> => {
+  return http<T>(path, { ...options, method: 'PATCH', json });
+};
 
-    if (options.searchParams) {
-      result.searchParams = options.searchParams;
-    }
+http.put = async <T>(path: string, json?: any, options?: Omit<HttpRequestOptions, 'method' | 'json'>): Promise<T> => {
+  return http<T>(path, { ...options, method: 'PUT', json });
+};
 
-    if (options.headers) {
-      result.headers = options.headers;
-    }
-
-    return result;
-  }
-}
-
-export const http = new Http();
+http.delete = async <T>(path: string, options?: Omit<HttpRequestOptions, 'method' | 'json'>): Promise<T> => {
+  return http<T>(path, { ...options, method: 'DELETE' });
+};
