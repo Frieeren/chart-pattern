@@ -9,7 +9,9 @@
 		"check": "biome check",
 		"check:fix": "biome check --write --unsafe",
 		"preview": "vite preview",
-		"test": "vitest"
+		"test": "vitest",
+		"prepare": "husky",
+		"lint-staged": "lint-staged"
 	},
 	"dependencies": {
 		"@tanstack/react-query": "^5.74.7",
@@ -32,11 +34,19 @@
 		"@vanilla-extract/vite-plugin": "^5.0.1",
 		"@vitejs/plugin-react": "^4.3.4",
 		"globals": "^16.0.0",
+		"husky": "^9.1.7",
 		"jsdom": "^26.1.0",
+		"knip": "^5.52.0",
+		"lint-staged": "^15.5.1",
 		"typescript": "~5.7.2",
 		"vite": "^6.3.1",
 		"vite-plugin-svgr": "^4.3.0",
 		"vite-tsconfig-paths": "^5.1.4",
 		"vitest": "^3.1.2"
+	},
+	"lint-staged": {
+		"*.{js,ts,jsx,tsx}": [
+			"biome check --write --unsafe"
+		]
 	}
 }
