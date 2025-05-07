@@ -1,10 +1,31 @@
 from datetime import datetime
 from typing import List, Literal, Tuple
 
-from fastapi import FastAPI
-from pydantic import BaseModel, Field
+from fastapi import Depends, FastAPI, HTTPException
+from pydantic import BaseModel, EmailStr, Field
+from sqlalchemy.orm import Session
+
+from .database import User, get_db
 
 app = FastAPI(root_path="/api")
+
+
+# User 관련 Pydantic 모델
+class UserBase(BaseModel):
+  username: str
+  email: EmailStr
+
+
+class UserCreate(UserBase):
+  pass
+
+
+class UserResponse(UserBase):
+  id: int
+  created_at: datetime
+
+  class Config:
+    from_attributes = True
 
 
 @app.get("/health", tags=["Health Check"])
@@ -13,6 +34,50 @@ async def health():
   API 서버의 상태를 확인하는 엔드포인트
   """
   return {"health": "success"}
+
+
+@app.post("/users/", response_model=UserResponse, tags=["Users"])
+def create_user(user: UserCreate, db: Session = Depends(get_db)):
+  """
+  새로운 사용자를 생성합니다.
+  """
+  # 이메일 중복 체크
+  db_user = db.query(User).filter(User.email == user.email).first()
+  if db_user:
+    raise HTTPException(status_code=400, detail="이미 등록된 이메일입니다.")
+
+  # 사용자명 중복 체크
+  db_user = db.query(User).filter(User.username == user.username).first()
+  if db_user:
+    raise HTTPException(
+      status_code=400, detail="이미 사용 중인 사용자명입니다."
+    )
+
+  db_user = User(username=user.username, email=user.email)
+  db.add(db_user)
+  db.commit()
+  db.refresh(db_user)
+  return db_user
+
+
+@app.get("/users/", response_model=List[UserResponse], tags=["Users"])
+def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+  """
+  모든 사용자 목록을 조회합니다.
+  """
+  users = db.query(User).offset(skip).limit(limit).all()
+  return users
+
+
+@app.get("/users/{user_id}", response_model=UserResponse, tags=["Users"])
+def read_user(user_id: int, db: Session = Depends(get_db)):
+  """
+  특정 ID의 사용자 정보를 조회합니다.
+  """
+  user = db.query(User).filter(User.id == user_id).first()
+  if user is None:
+    raise HTTPException(status_code=404, detail="사용자를 찾을 수 없습니다.")
+  return user
 
 
 class ChartMatchingRequest(BaseModel):
