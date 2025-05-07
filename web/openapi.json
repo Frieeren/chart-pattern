@@ -147,7 +147,7 @@
     "/api/v1/chart_matching_list": {
       "post": {
         "description": "주어진 기간 동안의 차트 패턴과 유사한 패턴을 찾아 반환합니다.",
-        "operationId": "chart_matching_list_api_v1_chart_matching_list_post",
+        "operationId": "chart_matching_list",
         "requestBody": {
           "content": {
             "application/json": {
@@ -166,7 +166,7 @@
                   "items": {
                     "$ref": "#/components/schemas/ChartMatchingResponse"
                   },
-                  "title": "Response Chart Matching List Api V1 Chart Matching List Post",
+                  "title": "Response Chart Matching List",
                   "type": "array"
                 }
               }

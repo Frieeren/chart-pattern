@@ -10,7 +10,7 @@ import { z as zod } from 'zod';
  * 주어진 기간 동안의 차트 패턴과 유사한 패턴을 찾아 반환합니다.
  * @summary 차트 패턴 매칭 리스트 조회
  */
-export const chartMatchingListApiV1ChartMatchingListPostBody = zod.object({
+export const chartMatchingListBody = zod.object({
   endDate: zod.string().datetime({}).describe('종료 날짜 및 시간'),
   startDate: zod.string().datetime({}).describe('시작 날짜 및 시간'),
   symbol: zod.string().describe('종목 코드 (예: BTCUSDT)'),
@@ -19,7 +19,7 @@ export const chartMatchingListApiV1ChartMatchingListPostBody = zod.object({
     .describe('시간 단위 (예: 5m, 1h, 1d)'),
 });
 
-export const chartMatchingListApiV1ChartMatchingListPostResponseItem = zod.object({
+export const chartMatchingListResponseItem = zod.object({
   data: zod
     .array(
       zod.object({
@@ -31,6 +31,4 @@ export const chartMatchingListApiV1ChartMatchingListPostResponseItem = zod.objec
   similarity: zod.number().describe('유사도 점수 (0~1)'),
   symbol: zod.string().describe('종목 코드'),
 });
-export const chartMatchingListApiV1ChartMatchingListPostResponse = zod.array(
-  chartMatchingListApiV1ChartMatchingListPostResponseItem
-);
+export const chartMatchingListResponse = zod.array(chartMatchingListResponseItem);

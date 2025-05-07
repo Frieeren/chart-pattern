@@ -10,7 +10,7 @@ import { http, HttpResponse, delay } from 'msw';
 
 import type { ChartMatchingResponse } from '../../models';
 
-export const getChartMatchingListApiV1ChartMatchingListPostResponseMock = (): ChartMatchingResponse[] =>
+export const getChartMatchingListResponseMock = (): ChartMatchingResponse[] =>
   Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
     data: Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
       x: faker.string.alpha(20),
@@ -22,7 +22,7 @@ export const getChartMatchingListApiV1ChartMatchingListPostResponseMock = (): Ch
     symbol: faker.string.alpha(20),
   }));
 
-export const getChartMatchingListApiV1ChartMatchingListPostMockHandler = (
+export const getChartMatchingListMockHandler = (
   overrideResponse?:
     | ChartMatchingResponse[]
     | ((
@@ -38,10 +38,10 @@ export const getChartMatchingListApiV1ChartMatchingListPostMockHandler = (
           ? typeof overrideResponse === 'function'
             ? await overrideResponse(info)
             : overrideResponse
-          : getChartMatchingListApiV1ChartMatchingListPostResponseMock()
+          : getChartMatchingListResponseMock()
       ),
       { status: 200, headers: { 'Content-Type': 'application/json' } }
     );
   });
 };
-export const getChartMatchingMock = () => [getChartMatchingListApiV1ChartMatchingListPostMockHandler()];
+export const getChartMatchingMock = () => [getChartMatchingListMockHandler()];

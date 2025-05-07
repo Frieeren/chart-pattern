@@ -16,10 +16,7 @@ import type { ErrorType } from '../../http';
  * 주어진 기간 동안의 차트 패턴과 유사한 패턴을 찾아 반환합니다.
  * @summary 차트 패턴 매칭 리스트 조회
  */
-export const chartMatchingListApiV1ChartMatchingListPost = (
-  chartMatchingRequest: ChartMatchingRequest,
-  signal?: AbortSignal
-) => {
+export const chartMatchingList = (chartMatchingRequest: ChartMatchingRequest, signal?: AbortSignal) => {
   return httpClient<ChartMatchingResponse[]>({
     url: 'http://localhost:8000/api/v1/chart_matching_list',
     method: 'POST',
@@ -29,23 +26,23 @@ export const chartMatchingListApiV1ChartMatchingListPost = (
   });
 };
 
-export const getChartMatchingListApiV1ChartMatchingListPostMutationOptions = <
+export const getChartMatchingListMutationOptions = <
   TError = ErrorType<HTTPValidationError>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof chartMatchingListApiV1ChartMatchingListPost>>,
+    Awaited<ReturnType<typeof chartMatchingList>>,
     TError,
     { data: ChartMatchingRequest },
     TContext
   >;
 }): UseMutationOptions<
-  Awaited<ReturnType<typeof chartMatchingListApiV1ChartMatchingListPost>>,
+  Awaited<ReturnType<typeof chartMatchingList>>,
   TError,
   { data: ChartMatchingRequest },
   TContext
 > => {
-  const mutationKey = ['chartMatchingListApiV1ChartMatchingListPost'];
+  const mutationKey = ['chartMatchingList'];
   const { mutation: mutationOptions } = options
     ? options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey
       ? options
@@ -53,33 +50,28 @@ export const getChartMatchingListApiV1ChartMatchingListPostMutationOptions = <
     : { mutation: { mutationKey } };
 
   const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof chartMatchingListApiV1ChartMatchingListPost>>,
+    Awaited<ReturnType<typeof chartMatchingList>>,
     { data: ChartMatchingRequest }
   > = props => {
     const { data } = props ?? {};
 
-    return chartMatchingListApiV1ChartMatchingListPost(data);
+    return chartMatchingList(data);
   };
 
   return { mutationFn, ...mutationOptions };
 };
 
-export type ChartMatchingListApiV1ChartMatchingListPostMutationResult = NonNullable<
-  Awaited<ReturnType<typeof chartMatchingListApiV1ChartMatchingListPost>>
->;
-export type ChartMatchingListApiV1ChartMatchingListPostMutationBody = ChartMatchingRequest;
-export type ChartMatchingListApiV1ChartMatchingListPostMutationError = ErrorType<HTTPValidationError>;
+export type ChartMatchingListMutationResult = NonNullable<Awaited<ReturnType<typeof chartMatchingList>>>;
+export type ChartMatchingListMutationBody = ChartMatchingRequest;
+export type ChartMatchingListMutationError = ErrorType<HTTPValidationError>;
 
 /**
  * @summary 차트 패턴 매칭 리스트 조회
  */
-export const useChartMatchingListApiV1ChartMatchingListPost = <
-  TError = ErrorType<HTTPValidationError>,
-  TContext = unknown,
->(
+export const useChartMatchingList = <TError = ErrorType<HTTPValidationError>, TContext = unknown>(
   options?: {
     mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof chartMatchingListApiV1ChartMatchingListPost>>,
+      Awaited<ReturnType<typeof chartMatchingList>>,
       TError,
       { data: ChartMatchingRequest },
       TContext
@@ -87,12 +79,12 @@ export const useChartMatchingListApiV1ChartMatchingListPost = <
   },
   queryClient?: QueryClient
 ): UseMutationResult<
-  Awaited<ReturnType<typeof chartMatchingListApiV1ChartMatchingListPost>>,
+  Awaited<ReturnType<typeof chartMatchingList>>,
   TError,
   { data: ChartMatchingRequest },
   TContext
 > => {
-  const mutationOptions = getChartMatchingListApiV1ChartMatchingListPostMutationOptions(options);
+  const mutationOptions = getChartMatchingListMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };
