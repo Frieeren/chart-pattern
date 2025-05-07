@@ -4,7 +4,7 @@
  * FastAPI
  * OpenAPI spec version: 0.1.0
  */
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import type {
   DataTag,
   DefinedInitialDataOptions,
@@ -19,6 +19,8 @@ import type {
   UseInfiniteQueryResult,
   UseQueryOptions,
   UseQueryResult,
+  UseSuspenseQueryOptions,
+  UseSuspenseQueryResult,
 } from '@tanstack/react-query';
 
 import { http } from '../../http';
@@ -184,6 +186,71 @@ export function useHealthHealthGet<TData = Awaited<ReturnType<typeof healthHealt
   const queryOptions = getHealthHealthGetQueryOptions(options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+export const getHealthHealthGetSuspenseQueryOptions = <
+  TData = Awaited<ReturnType<typeof healthHealthGet>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof healthHealthGet>>, TError, TData>>;
+}) => {
+  const { query: queryOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getHealthHealthGetQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof healthHealthGet>>> = ({ signal }) => healthHealthGet(signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+    Awaited<ReturnType<typeof healthHealthGet>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type HealthHealthGetSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof healthHealthGet>>>;
+export type HealthHealthGetSuspenseQueryError = ErrorType<unknown>;
+
+export function useHealthHealthGetSuspense<
+  TData = Awaited<ReturnType<typeof healthHealthGet>>,
+  TError = ErrorType<unknown>,
+>(
+  options: { query: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof healthHealthGet>>, TError, TData>> },
+  queryClient?: QueryClient
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useHealthHealthGetSuspense<
+  TData = Awaited<ReturnType<typeof healthHealthGet>>,
+  TError = ErrorType<unknown>,
+>(
+  options?: { query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof healthHealthGet>>, TError, TData>> },
+  queryClient?: QueryClient
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useHealthHealthGetSuspense<
+  TData = Awaited<ReturnType<typeof healthHealthGet>>,
+  TError = ErrorType<unknown>,
+>(
+  options?: { query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof healthHealthGet>>, TError, TData>> },
+  queryClient?: QueryClient
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Health
+ */
+
+export function useHealthHealthGetSuspense<
+  TData = Awaited<ReturnType<typeof healthHealthGet>>,
+  TError = ErrorType<unknown>,
+>(
+  options?: { query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof healthHealthGet>>, TError, TData>> },
+  queryClient?: QueryClient
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getHealthHealthGetSuspenseQueryOptions(options);
+
+  const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<TData, TError> & {
     queryKey: DataTag<QueryKey, TData, TError>;
   };
 

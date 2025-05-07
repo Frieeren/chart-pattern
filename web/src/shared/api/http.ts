@@ -1,12 +1,8 @@
-import ky, { HTTPError } from "ky";
-import {
-  BadRequestError,
-  InternetServerError,
-  NotFoundError,
-} from "../exception/APIError";
-import { BaseError } from "../exception/BaseError";
+import ky, { HTTPError } from 'ky';
+import { BadRequestError, InternetServerError, NotFoundError } from '../exception/APIError';
+import { BaseError } from '../exception/BaseError';
 
-const baseURL = "http://localhost:8000";
+const baseURL = 'http://localhost:8000';
 const TIMEOUT = 60000;
 
 export interface ErrorType<Error> {
@@ -21,12 +17,12 @@ export interface ErrorType<Error> {
 const instance = ky.create({
   prefixUrl: baseURL,
   headers: {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
   },
   timeout: TIMEOUT,
   hooks: {
     beforeError: [
-      async (error) => {
+      async error => {
         if (error instanceof HTTPError) {
           const { response } = error;
           const status = response.status;
@@ -38,20 +34,17 @@ const instance = ky.create({
             return error;
           }
 
-          const message =
-            typeof data === "object" && data !== null && "message" in data
-              ? String(data.message)
-              : null;
+          const message = typeof data === 'object' && data !== null && 'message' in data ? String(data.message) : null;
 
           switch (status) {
             case 400:
-              throw new BadRequestError(message || "Bad Request");
+              throw new BadRequestError(message || 'Bad Request');
             case 404:
-              throw new NotFoundError(message || "Not Found");
+              throw new NotFoundError(message || 'Not Found');
             case 500:
-              throw new InternetServerError(message || "Internal Server Error");
+              throw new InternetServerError(message || 'Internal Server Error');
             default:
-              throw new BaseError(status, message || "An error occurred");
+              throw new BaseError(status, message || 'An error occurred');
           }
         }
 
@@ -62,12 +55,10 @@ const instance = ky.create({
 });
 
 const parseResponse = async <T>(response: Response): Promise<T> => {
-  const contentType = response.headers.get("content-type");
+  const contentType = response.headers.get('content-type');
   const jsonParseAvailable = contentType && /json/.test(contentType);
 
-  return (
-    jsonParseAvailable ? await response.json() : await response.text()
-  ) as T;
+  return (jsonParseAvailable ? await response.json() : await response.text()) as T;
 };
 
 export const http = <T>(
@@ -104,7 +95,7 @@ export const http = <T>(
     kyOptions.json = config.data;
   } else if (config.json) {
     kyOptions.json = config.json;
-  } else if (config.body && typeof config.body === "string") {
+  } else if (config.body && typeof config.body === 'string') {
     try {
       kyOptions.json = JSON.parse(config.body);
     } catch {
@@ -113,8 +104,8 @@ export const http = <T>(
   }
 
   const promise = instance(config.url, kyOptions)
-    .then((response) => parseResponse<T>(response))
-    .catch((error) => {
+    .then(response => parseResponse<T>(response))
+    .catch(error => {
       if (error instanceof HTTPError || error instanceof BaseError) {
         throw error;
       }
@@ -123,9 +114,7 @@ export const http = <T>(
 
   // @ts-ignore
   promise.cancel = () => {
-    console.warn(
-      "Cancel requested but ky does not support native cancellation"
-    );
+    console.warn('Cancel requested but ky does not support native cancellation');
   };
 
   return promise;

@@ -12,10 +12,12 @@ export default {
       client: "react-query",
       baseUrl: "http://localhost:8000",
       mock: true,
+      biome: true,
       override: {
         query: {
           useQuery: true,
           useInfinite: true,
+          useSuspenseQuery: true,
         },
         mutator: {
           path: "./src/shared/api/http.ts",
@@ -40,6 +42,7 @@ export default {
       client: "zod",
       target: "src/shared/api/endpoints",
       fileExtension: ".zod.ts",
+      biome: true,
     },
   },
 };
