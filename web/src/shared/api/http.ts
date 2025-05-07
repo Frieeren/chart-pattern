@@ -2,115 +2,120 @@ import ky, { HTTPError } from 'ky';
 import { BadRequestError, InternetServerError, NotFoundError } from '../exception/APIError';
 import { BaseError } from '../exception/BaseError';
 
-const baseURL = 'http://localhost:3000';
+const baseURL = 'http://localhost:8000';
 const TIMEOUT = 60000;
 
-type HttpRequestMethod = 'get' | 'post' | 'patch' | 'put' | 'delete';
-
-interface HttpRequestOptions {
-  json?: unknown;
-  searchParams?: Record<string, string | string[] | undefined>;
-  headers?: Record<string, string | undefined>;
+export interface ErrorType<Error> {
+  name: string;
+  message: string;
+  response?: {
+    status: number;
+    data: Error;
+  };
 }
 
-export class Http {
-  private instance = ky.create({
-    prefixUrl: baseURL,
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    timeout: TIMEOUT,
-    hooks: {
-      beforeError: [
-        async error => {
-          if (error instanceof HTTPError) {
-            const { response } = error;
-            const status = response.status;
+const instance = ky.create({
+  prefixUrl: baseURL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  timeout: TIMEOUT,
+  hooks: {
+    beforeError: [
+      async error => {
+        if (error instanceof HTTPError) {
+          const { response } = error;
+          const status = response.status;
 
-            let data: unknown;
-            try {
-              data = await response.json();
-            } catch (e) {
-              return error;
-            }
-
-            const message =
-              typeof data === 'object' && data !== null && 'message' in data ? String(data.message) : null;
-
-            switch (status) {
-              case 400:
-                throw new BadRequestError(message || 'Bad Request');
-              case 404:
-                throw new NotFoundError(message || 'Not Found');
-              case 500:
-                throw new InternetServerError(message || 'Internal Server Error');
-              default:
-                throw new BaseError(status, message || 'An error occurred');
-            }
+          let data: unknown;
+          try {
+            data = await response.json();
+          } catch (e) {
+            return error;
           }
 
-          return error;
-        },
-      ],
-    },
-  });
+          const message = typeof data === 'object' && data !== null && 'message' in data ? String(data.message) : null;
 
-  async get<T>(path: string, options?: Omit<HttpRequestOptions, 'json'>): Promise<T> {
-    return this.request<T>('get', path, options);
+          switch (status) {
+            case 400:
+              throw new BadRequestError(message || 'Bad Request');
+            case 404:
+              throw new NotFoundError(message || 'Not Found');
+            case 500:
+              throw new InternetServerError(message || 'Internal Server Error');
+            default:
+              throw new BaseError(status, message || 'An error occurred');
+          }
+        }
+
+        return error;
+      },
+    ],
+  },
+});
+
+const parseResponse = async <T>(response: Response): Promise<T> => {
+  const contentType = response.headers.get('content-type');
+  const jsonParseAvailable = contentType && /json/.test(contentType);
+
+  return (jsonParseAvailable ? await response.json() : await response.text()) as T;
+};
+
+export const httpClient = <T>(
+  config: RequestInit & {
+    url: string;
+    params?: Record<string, string | string[] | undefined>;
+    data?: any;
+    json?: any;
+  }
+): Promise<T> => {
+  const kyOptions: Record<string, unknown> = {};
+
+  if (config.method) {
+    kyOptions.method = config.method;
   }
 
-  async post<T>(path: string, options?: HttpRequestOptions): Promise<T> {
-    return this.request<T>('post', path, options);
+  if (config.headers) {
+    if (config.headers instanceof Headers) {
+      const headerObj: Record<string, string> = {};
+      config.headers.forEach((value, key) => {
+        headerObj[key] = value;
+      });
+      kyOptions.headers = headerObj;
+    } else {
+      kyOptions.headers = config.headers;
+    }
   }
 
-  async patch<T>(path: string, options?: HttpRequestOptions): Promise<T> {
-    return this.request<T>('patch', path, options);
+  if (config.params) {
+    kyOptions.searchParams = config.params;
   }
 
-  async put<T>(path: string, options?: HttpRequestOptions): Promise<T> {
-    return this.request<T>('put', path, options);
-  }
-
-  async delete<T>(path: string, options?: HttpRequestOptions): Promise<T> {
-    return this.request<T>('delete', path, options);
-  }
-
-  private async request<T>(method: HttpRequestMethod, path: string, options?: HttpRequestOptions): Promise<T> {
-    const kyOptions = this.parseRequestOptions(options);
-
+  if (config.data) {
+    kyOptions.json = config.data;
+  } else if (config.json) {
+    kyOptions.json = config.json;
+  } else if (config.body && typeof config.body === 'string') {
     try {
-      const response = await this.instance[method](path, kyOptions);
-      return await response.json<T>();
-    } catch (error) {
-      if (error instanceof HTTPError) {
-        throw error;
-      }
-      if (error instanceof BaseError) {
+      kyOptions.json = JSON.parse(config.body);
+    } catch {
+      kyOptions.body = config.body;
+    }
+  }
+
+  const promise = instance(config.url, kyOptions)
+    .then(response => parseResponse<T>(response))
+    .catch(error => {
+      if (error instanceof HTTPError || error instanceof BaseError) {
         throw error;
       }
       throw new Error(`Request failed: ${(error as Error).message}`);
-    }
-  }
+    });
 
-  private parseRequestOptions(options?: HttpRequestOptions): Record<string, unknown> {
-    if (!options) return {};
+  // @ts-ignore
+  promise.cancel = () => {
+    console.warn('Cancel requested but ky does not support native cancellation');
+  };
 
-    const result: Record<string, unknown> = {};
-
-    if (options.json !== undefined) {
-      result.json = options.json;
-    }
-
-    if (options.searchParams) {
-      result.searchParams = options.searchParams;
-    }
-
-    if (options.headers) {
-      result.headers = options.headers;
-    }
-
-    return result;
-  }
-}
-
-export const http = new Http();
+  return promise;
+};

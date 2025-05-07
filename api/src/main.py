@@ -51,6 +51,7 @@ class ChartMatchingResponse(BaseModel):
   tags=["Chart Matching"],
   summary="차트 패턴 매칭 리스트 조회",
   description="주어진 기간 동안의 차트 패턴과 유사한 패턴을 찾아 반환합니다.",
+  operation_id="chart_matching_list",
 )
 async def chart_matching_list(request: ChartMatchingRequest):
   """
