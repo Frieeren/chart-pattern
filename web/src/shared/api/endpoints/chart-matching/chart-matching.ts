@@ -10,53 +10,27 @@ import type { MutationFunction, QueryClient, UseMutationOptions, UseMutationResu
 import type { ChartMatchingRequest, ChartMatchingResponse, HTTPValidationError } from '../../models';
 
 import { http } from '../../http';
-
-type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
+import type { ErrorType } from '../../http';
 
 /**
  * 주어진 기간 동안의 차트 패턴과 유사한 패턴을 찾아 반환합니다.
  * @summary 차트 패턴 매칭 리스트 조회
  */
-export type chartMatchingListApiV1ChartMatchingListPostResponse200 = {
-  data: ChartMatchingResponse[];
-  status: 200;
-};
-
-export type chartMatchingListApiV1ChartMatchingListPostResponse422 = {
-  data: HTTPValidationError;
-  status: 422;
-};
-
-export type chartMatchingListApiV1ChartMatchingListPostResponseComposite =
-  | chartMatchingListApiV1ChartMatchingListPostResponse200
-  | chartMatchingListApiV1ChartMatchingListPostResponse422;
-
-export type chartMatchingListApiV1ChartMatchingListPostResponse =
-  chartMatchingListApiV1ChartMatchingListPostResponseComposite & {
-    headers: Headers;
-  };
-
-export const getChartMatchingListApiV1ChartMatchingListPostUrl = () => {
-  return 'http://localhost:8000/api/v1/chart_matching_list';
-};
-
-export const chartMatchingListApiV1ChartMatchingListPost = async (
+export const chartMatchingListApiV1ChartMatchingListPost = (
   chartMatchingRequest: ChartMatchingRequest,
-  options?: RequestInit
-): Promise<chartMatchingListApiV1ChartMatchingListPostResponse> => {
-  return http<chartMatchingListApiV1ChartMatchingListPostResponse>(
-    getChartMatchingListApiV1ChartMatchingListPostUrl(),
-    {
-      ...options,
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', ...options?.headers },
-      body: JSON.stringify(chartMatchingRequest),
-    }
-  );
+  signal?: AbortSignal
+) => {
+  return http<ChartMatchingResponse[]>({
+    url: 'http://localhost:8000/api/v1/chart_matching_list',
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    data: chartMatchingRequest,
+    signal,
+  });
 };
 
 export const getChartMatchingListApiV1ChartMatchingListPostMutationOptions = <
-  TError = HTTPValidationError,
+  TError = ErrorType<HTTPValidationError>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -65,7 +39,6 @@ export const getChartMatchingListApiV1ChartMatchingListPostMutationOptions = <
     { data: ChartMatchingRequest },
     TContext
   >;
-  request?: SecondParameter<typeof http>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof chartMatchingListApiV1ChartMatchingListPost>>,
   TError,
@@ -73,11 +46,11 @@ export const getChartMatchingListApiV1ChartMatchingListPostMutationOptions = <
   TContext
 > => {
   const mutationKey = ['chartMatchingListApiV1ChartMatchingListPost'];
-  const { mutation: mutationOptions, request: requestOptions } = options
+  const { mutation: mutationOptions } = options
     ? options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey
       ? options
       : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
+    : { mutation: { mutationKey } };
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof chartMatchingListApiV1ChartMatchingListPost>>,
@@ -85,7 +58,7 @@ export const getChartMatchingListApiV1ChartMatchingListPostMutationOptions = <
   > = props => {
     const { data } = props ?? {};
 
-    return chartMatchingListApiV1ChartMatchingListPost(data, requestOptions);
+    return chartMatchingListApiV1ChartMatchingListPost(data);
   };
 
   return { mutationFn, ...mutationOptions };
@@ -95,12 +68,15 @@ export type ChartMatchingListApiV1ChartMatchingListPostMutationResult = NonNulla
   Awaited<ReturnType<typeof chartMatchingListApiV1ChartMatchingListPost>>
 >;
 export type ChartMatchingListApiV1ChartMatchingListPostMutationBody = ChartMatchingRequest;
-export type ChartMatchingListApiV1ChartMatchingListPostMutationError = HTTPValidationError;
+export type ChartMatchingListApiV1ChartMatchingListPostMutationError = ErrorType<HTTPValidationError>;
 
 /**
  * @summary 차트 패턴 매칭 리스트 조회
  */
-export const useChartMatchingListApiV1ChartMatchingListPost = <TError = HTTPValidationError, TContext = unknown>(
+export const useChartMatchingListApiV1ChartMatchingListPost = <
+  TError = ErrorType<HTTPValidationError>,
+  TContext = unknown,
+>(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof chartMatchingListApiV1ChartMatchingListPost>>,
@@ -108,7 +84,6 @@ export const useChartMatchingListApiV1ChartMatchingListPost = <TError = HTTPVali
       { data: ChartMatchingRequest },
       TContext
     >;
-    request?: SecondParameter<typeof http>;
   },
   queryClient?: QueryClient
 ): UseMutationResult<

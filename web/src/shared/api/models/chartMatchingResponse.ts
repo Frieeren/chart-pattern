@@ -7,10 +7,10 @@
 import type { ChartData } from './chartData';
 
 export interface ChartMatchingResponse {
-  /** 종목 코드 */
-  symbol: string;
   /** 차트 데이터 */
   data: ChartData[];
   /** 유사도 점수 (0~1) */
   similarity: number;
+  /** 종목 코드 */
+  symbol: string;
 }

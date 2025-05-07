@@ -1,31 +1,45 @@
+import type { GeneratorVerbOptions } from "@orval/core";
+
 export default {
   api: {
-    input: './openapi.json',
+    input: {
+      target: "./openapi.json",
+    },
     output: {
-      mode: 'tags-split',
-      target: 'src/shared/api/endpoints',
-      schemas: 'src/shared/api/models',
-      client: 'react-query',
-      httpClient: 'fetch',
-      baseUrl: 'http://localhost:8000',
+      mode: "tags-split",
+      target: "src/shared/api/endpoints",
+      schemas: "src/shared/api/models",
+      client: "react-query",
+      baseUrl: "http://localhost:8000",
       mock: true,
       override: {
+        query: {
+          useQuery: true,
+          useInfinite: true,
+        },
         mutator: {
-          path: './src/shared/api/http.ts',
-          name: 'http',
+          path: "./src/shared/api/http.ts",
+          name: "http",
+        },
+        transformer: (verb: GeneratorVerbOptions): GeneratorVerbOptions => {
+          if (verb.response?.definition.errors === "void") {
+            verb.response.definition.errors = "null";
+          }
+
+          return verb;
         },
       },
-    }
+    },
   },
   zod: {
     input: {
-      target: './openapi.json',
+      target: "./openapi.json",
     },
     output: {
-      mode: 'tags-split',
-      client: 'zod',
-      target: 'src/shared/api/endpoints',
-      fileExtension: '.zod.ts',
+      mode: "tags-split",
+      client: "zod",
+      target: "src/shared/api/endpoints",
+      fileExtension: ".zod.ts",
     },
   },
 };

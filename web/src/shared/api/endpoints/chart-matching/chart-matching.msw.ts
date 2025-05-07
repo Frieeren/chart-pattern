@@ -12,7 +12,6 @@ import type { ChartMatchingResponse } from '../../models';
 
 export const getChartMatchingListApiV1ChartMatchingListPostResponseMock = (): ChartMatchingResponse[] =>
   Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
-    symbol: faker.string.alpha(20),
     data: Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
       x: faker.string.alpha(20),
       y: Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() =>
@@ -20,6 +19,7 @@ export const getChartMatchingListApiV1ChartMatchingListPostResponseMock = (): Ch
       ),
     })),
     similarity: faker.number.int({ min: undefined, max: undefined }),
+    symbol: faker.string.alpha(20),
   }));
 
 export const getChartMatchingListApiV1ChartMatchingListPostMockHandler = (

@@ -11,16 +11,15 @@ import { z as zod } from 'zod';
  * @summary 차트 패턴 매칭 리스트 조회
  */
 export const chartMatchingListApiV1ChartMatchingListPostBody = zod.object({
+  endDate: zod.string().datetime({}).describe('종료 날짜 및 시간'),
+  startDate: zod.string().datetime({}).describe('시작 날짜 및 시간'),
   symbol: zod.string().describe('종목 코드 (예: BTCUSDT)'),
   timeframe: zod
     .enum(['1', '3', '5', '15', '30', '60', '120', '180', '240', 'D', 'W'])
     .describe('시간 단위 (예: 5m, 1h, 1d)'),
-  startDate: zod.string().datetime({}).describe('시작 날짜 및 시간'),
-  endDate: zod.string().datetime({}).describe('종료 날짜 및 시간'),
 });
 
 export const chartMatchingListApiV1ChartMatchingListPostResponseItem = zod.object({
-  symbol: zod.string().describe('종목 코드'),
   data: zod
     .array(
       zod.object({
@@ -30,6 +29,7 @@ export const chartMatchingListApiV1ChartMatchingListPostResponseItem = zod.objec
     )
     .describe('차트 데이터'),
   similarity: zod.number().describe('유사도 점수 (0~1)'),
+  symbol: zod.string().describe('종목 코드'),
 });
 export const chartMatchingListApiV1ChartMatchingListPostResponse = zod.array(
   chartMatchingListApiV1ChartMatchingListPostResponseItem

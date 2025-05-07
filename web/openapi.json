@@ -1,1 +1,215 @@
-{"openapi":"3.1.0","info":{"title":"FastAPI","version":"0.1.0"},"servers":[{"url":"/api"}],"paths":{"/health":{"get":{"tags":["Health Check"],"summary":"Health","description":"API 서버의 상태를 확인하는 엔드포인트","operationId":"health_health_get","responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}}}}},"/api/v1/chart_matching_list":{"post":{"tags":["Chart Matching"],"summary":"차트 패턴 매칭 리스트 조회","description":"주어진 기간 동안의 차트 패턴과 유사한 패턴을 찾아 반환합니다.","operationId":"chart_matching_list_api_v1_chart_matching_list_post","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/ChartMatchingRequest"}}},"required":true},"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{"items":{"$ref":"#/components/schemas/ChartMatchingResponse"},"type":"array","title":"Response Chart Matching List Api V1 Chart Matching List Post"}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}}},"components":{"schemas":{"ChartData":{"properties":{"x":{"type":"string","title":"X","description":"날짜 및 시간"},"y":{"items":{"type":"number"},"type":"array","title":"Y","description":"[시가, 고가, 종가, 저가]"}},"type":"object","required":["x","y"],"title":"ChartData"},"ChartMatchingRequest":{"properties":{"symbol":{"type":"string","title":"Symbol","description":"종목 코드 (예: BTCUSDT)"},"timeframe":{"type":"string","enum":["1","3","5","15","30","60","120","180","240","D","W"],"title":"Timeframe","description":"시간 단위 (예: 5m, 1h, 1d)"},"startDate":{"type":"string","format":"date-time","title":"Startdate","description":"시작 날짜 및 시간"},"endDate":{"type":"string","format":"date-time","title":"Enddate","description":"종료 날짜 및 시간"}},"type":"object","required":["symbol","timeframe","startDate","endDate"],"title":"ChartMatchingRequest","example":{"endDate":"2024-03-01T13:00:00Z","startDate":"2024-03-01T12:00:00Z","symbol":"BTCUSDT","timeframe":"5"}},"ChartMatchingResponse":{"properties":{"symbol":{"type":"string","title":"Symbol","description":"종목 코드"},"data":{"items":{"$ref":"#/components/schemas/ChartData"},"type":"array","title":"Data","description":"차트 데이터"},"similarity":{"type":"number","title":"Similarity","description":"유사도 점수 (0~1)"}},"type":"object","required":["symbol","data","similarity"],"title":"ChartMatchingResponse"},"HTTPValidationError":{"properties":{"detail":{"items":{"$ref":"#/components/schemas/ValidationError"},"type":"array","title":"Detail"}},"type":"object","title":"HTTPValidationError"},"ValidationError":{"properties":{"loc":{"items":{"anyOf":[{"type":"string"},{"type":"integer"}]},"type":"array","title":"Location"},"msg":{"type":"string","title":"Message"},"type":{"type":"string","title":"Error Type"}},"type":"object","required":["loc","msg","type"],"title":"ValidationError"}}}}
+{
+  "components": {
+    "schemas": {
+      "ChartData": {
+        "properties": {
+          "x": {
+            "description": "날짜 및 시간",
+            "title": "X",
+            "type": "string"
+          },
+          "y": {
+            "description": "[시가, 고가, 종가, 저가]",
+            "items": {
+              "type": "number"
+            },
+            "title": "Y",
+            "type": "array"
+          }
+        },
+        "required": ["x", "y"],
+        "title": "ChartData",
+        "type": "object"
+      },
+      "ChartMatchingRequest": {
+        "example": {
+          "endDate": "2024-03-01T13:00:00Z",
+          "startDate": "2024-03-01T12:00:00Z",
+          "symbol": "BTCUSDT",
+          "timeframe": "5"
+        },
+        "properties": {
+          "endDate": {
+            "description": "종료 날짜 및 시간",
+            "format": "date-time",
+            "title": "Enddate",
+            "type": "string"
+          },
+          "startDate": {
+            "description": "시작 날짜 및 시간",
+            "format": "date-time",
+            "title": "Startdate",
+            "type": "string"
+          },
+          "symbol": {
+            "description": "종목 코드 (예: BTCUSDT)",
+            "title": "Symbol",
+            "type": "string"
+          },
+          "timeframe": {
+            "description": "시간 단위 (예: 5m, 1h, 1d)",
+            "enum": [
+              "1",
+              "3",
+              "5",
+              "15",
+              "30",
+              "60",
+              "120",
+              "180",
+              "240",
+              "D",
+              "W"
+            ],
+            "title": "Timeframe",
+            "type": "string"
+          }
+        },
+        "required": ["symbol", "timeframe", "startDate", "endDate"],
+        "title": "ChartMatchingRequest",
+        "type": "object"
+      },
+      "ChartMatchingResponse": {
+        "properties": {
+          "data": {
+            "description": "차트 데이터",
+            "items": {
+              "$ref": "#/components/schemas/ChartData"
+            },
+            "title": "Data",
+            "type": "array"
+          },
+          "similarity": {
+            "description": "유사도 점수 (0~1)",
+            "title": "Similarity",
+            "type": "number"
+          },
+          "symbol": {
+            "description": "종목 코드",
+            "title": "Symbol",
+            "type": "string"
+          }
+        },
+        "required": ["symbol", "data", "similarity"],
+        "title": "ChartMatchingResponse",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": ["loc", "msg", "type"],
+        "title": "ValidationError",
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "title": "FastAPI",
+    "version": "0.1.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/v1/chart_matching_list": {
+      "post": {
+        "description": "주어진 기간 동안의 차트 패턴과 유사한 패턴을 찾아 반환합니다.",
+        "operationId": "chart_matching_list_api_v1_chart_matching_list_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChartMatchingRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ChartMatchingResponse"
+                  },
+                  "title": "Response Chart Matching List Api V1 Chart Matching List Post",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "차트 패턴 매칭 리스트 조회",
+        "tags": ["Chart Matching"]
+      }
+    },
+    "/health": {
+      "get": {
+        "description": "API 서버의 상태를 확인하는 엔드포인트",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Health",
+        "tags": ["Health Check"]
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "/api"
+    }
+  ]
+}

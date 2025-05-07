@@ -7,12 +7,12 @@
 import type { ChartMatchingRequestTimeframe } from './chartMatchingRequestTimeframe';
 
 export interface ChartMatchingRequest {
+  /** 종료 날짜 및 시간 */
+  endDate: string;
+  /** 시작 날짜 및 시간 */
+  startDate: string;
   /** 종목 코드 (예: BTCUSDT) */
   symbol: string;
   /** 시간 단위 (예: 5m, 1h, 1d) */
   timeframe: ChartMatchingRequestTimeframe;
-  /** 시작 날짜 및 시간 */
-  startDate: string;
-  /** 종료 날짜 및 시간 */
-  endDate: string;
 }
