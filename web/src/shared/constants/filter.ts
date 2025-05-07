@@ -1,9 +1,9 @@
 import type { ChartItem, FilterOption, SymbolOption } from '../types/domain';
 
 export const SAMPLE_SYMBOLS: SymbolOption[] = [
-  { id: 'btc', name: '비트코인', code: 'BTCUSD' },
-  { id: 'eth', name: '이더리움', code: 'ETHUSD' },
-  { id: 'xrp', name: '리플', code: 'XRPUSD' },
+  { id: 'btc', name: '비트코인', code: 'BTCUSDT' },
+  { id: 'eth', name: '이더리움', code: 'ETHUSDT' },
+  { id: 'xrp', name: '리플', code: 'XRPUSDT' },
 ];
 
 export const SYMBOL_OPTIONS: FilterOption[] = SAMPLE_SYMBOLS.map(symbol => ({
