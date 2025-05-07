@@ -23,7 +23,7 @@ import type {
   UseSuspenseQueryResult,
 } from '@tanstack/react-query';
 
-import { http } from '../../http';
+import { httpClient } from '../../http';
 import type { ErrorType } from '../../http';
 
 /**
@@ -31,7 +31,7 @@ import type { ErrorType } from '../../http';
  * @summary Health
  */
 export const healthHealthGet = (signal?: AbortSignal) => {
-  return http<unknown>({ url: 'http://localhost:8000/health', method: 'GET', signal });
+  return httpClient<unknown>({ url: 'http://localhost:8000/health', method: 'GET', signal });
 };
 
 export const getHealthHealthGetQueryKey = () => {

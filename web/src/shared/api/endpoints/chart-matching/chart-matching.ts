@@ -9,7 +9,7 @@ import type { MutationFunction, QueryClient, UseMutationOptions, UseMutationResu
 
 import type { ChartMatchingRequest, ChartMatchingResponse, HTTPValidationError } from '../../models';
 
-import { http } from '../../http';
+import { httpClient } from '../../http';
 import type { ErrorType } from '../../http';
 
 /**
@@ -20,7 +20,7 @@ export const chartMatchingListApiV1ChartMatchingListPost = (
   chartMatchingRequest: ChartMatchingRequest,
   signal?: AbortSignal
 ) => {
-  return http<ChartMatchingResponse[]>({
+  return httpClient<ChartMatchingResponse[]>({
     url: 'http://localhost:8000/api/v1/chart_matching_list',
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

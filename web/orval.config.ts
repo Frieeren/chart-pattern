@@ -7,6 +7,7 @@ export default {
     },
     output: {
       mode: "tags-split",
+      clear: ["src/shared/api/endpoints", "src/shared/api/models"],
       target: "src/shared/api/endpoints",
       schemas: "src/shared/api/models",
       client: "react-query",
@@ -21,7 +22,7 @@ export default {
         },
         mutator: {
           path: "./src/shared/api/http.ts",
-          name: "http",
+          name: "httpClient",
         },
         transformer: (verb: GeneratorVerbOptions): GeneratorVerbOptions => {
           if (verb.response?.definition.errors === "void") {
@@ -39,6 +40,7 @@ export default {
     },
     output: {
       mode: "tags-split",
+      clear: ["src/shared/api/endpoints"],
       client: "zod",
       target: "src/shared/api/endpoints",
       fileExtension: ".zod.ts",

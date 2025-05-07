@@ -61,7 +61,7 @@ const parseResponse = async <T>(response: Response): Promise<T> => {
   return (jsonParseAvailable ? await response.json() : await response.text()) as T;
 };
 
-export const http = <T>(
+export const httpClient = <T>(
   config: RequestInit & {
     url: string;
     params?: Record<string, string | string[] | undefined>;
