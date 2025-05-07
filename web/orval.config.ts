@@ -1,13 +1,13 @@
 export default {
   api: {
-    input: './openapi.yaml',
+    input: './openapi.json',
     output: {
       mode: 'tags-split',
       target: 'src/shared/api/endpoints',
       schemas: 'src/shared/api/models',
       client: 'react-query',
       httpClient: 'fetch',
-      baseUrl: 'http://localhost:3000',
+      baseUrl: 'http://localhost:8000',
       mock: true,
       override: {
         mutator: {
@@ -19,7 +19,7 @@ export default {
   },
   zod: {
     input: {
-      target: './openapi.yaml',
+      target: './openapi.json',
     },
     output: {
       mode: 'tags-split',
