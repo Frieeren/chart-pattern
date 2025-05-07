@@ -1,5 +1,6 @@
 import type { ChartItem } from '@web/shared/types/domain';
-import { chartCard, chartCardHeader, chartCardTitle, chartListSection, chartPreview, emptyMessage } from './style.css';
+import { chartCard, chartCardHeader, chartCardTitle, chartListSection, emptyMessage } from './style.css';
+import { CandleStickChart } from '../SideChart/CandleStickChart';
 
 interface ChartCardProps {
   chart: ChartItem;
@@ -11,7 +12,7 @@ const ChartCard: React.FC<ChartCardProps> = ({ chart }) => {
       <div className={chartCardHeader}>
         <h4 className={chartCardTitle}>{chart.name}</h4>
       </div>
-      <div className={chartPreview} />
+      <CandleStickChart />
     </div>
   );
 };
