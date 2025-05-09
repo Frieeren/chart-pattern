@@ -4,6 +4,7 @@ import svgr from "vite-plugin-svgr";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { vanillaExtractPlugin } from "@vanilla-extract/vite-plugin";
 import { compression } from "vite-plugin-compression2";
+import { visualizer } from "rollup-plugin-visualizer";
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd());
@@ -18,6 +19,7 @@ export default defineConfig(({ mode }) => {
       tsconfigPaths(),
       vanillaExtractPlugin(),
       compression(),
+      visualizer(),
     ],
   };
 });
