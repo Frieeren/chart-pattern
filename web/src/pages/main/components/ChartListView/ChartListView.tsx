@@ -1,6 +1,8 @@
 import type { ChartItem } from '@web/shared/types/domain';
+import { Suspense, lazy } from 'react';
 import { chartCard, chartCardHeader, chartCardTitle, chartListSection, emptyMessage } from './style.css';
-import { CandleStickChart } from '../SideChart/CandleStickChart';
+
+const CandleStickChart = lazy(() => import('../SideChart/CandleStickChart'));
 
 interface ChartCardProps {
   chart: ChartItem;
@@ -12,7 +14,9 @@ const ChartCard: React.FC<ChartCardProps> = ({ chart }) => {
       <div className={chartCardHeader}>
         <h4 className={chartCardTitle}>{chart.name}</h4>
       </div>
-      <CandleStickChart />
+      <Suspense>
+        <CandleStickChart />
+      </Suspense>
     </div>
   );
 };

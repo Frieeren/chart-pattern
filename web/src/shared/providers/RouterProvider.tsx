@@ -1,13 +1,19 @@
-import { MainPage } from '@web/pages/main/MainPage';
+import { Suspense, lazy } from 'react';
 import { RouterProvider, createBrowserRouter } from 'react-router';
 
-export const routes =[
+const MainPage = lazy(() => import('@web/pages/main/MainPage'));
+
+export const routes = [
   {
     path: '/',
     children: [
       {
         index: true,
-        element: <MainPage />,
+        element: (
+          <Suspense>
+            <MainPage />
+          </Suspense>
+        ),
       },
       {
         path: '*',
