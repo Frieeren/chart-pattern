@@ -13,6 +13,22 @@ export default defineConfig(({ mode }) => {
     preview: {
       allowedHosts: [env.VITE_ADDITIONAL_SERVER_ALLOWED_HOSTS],
     },
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: (id: string) => {
+            if (id.includes("node_modules")) {
+              if (id.includes("apexcharts")) {
+                return "apexcharts";
+              }
+              if (id.includes("react-apexcharts")) {
+                return "react-apexcharts";
+              }
+            }
+          },
+        },
+      },
+    },
     plugins: [
       react(),
       svgr(),

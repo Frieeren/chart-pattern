@@ -1,7 +1,7 @@
-import { describe, expect, test, vi } from 'vitest';
-import { renderWithRouter } from '../renderWithRouter';
 import { act, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { describe, expect, test, vi } from 'vitest';
+import { renderWithRouter } from '../renderWithRouter';
 
 /** react-apexcharts mocking(https://github.com/apexcharts/react-apexcharts/issues/425) */
 vi.mock('react-apexcharts', () => ({
@@ -19,7 +19,7 @@ describe('Main 페이지', () => {
     await act(async () => {
       router.navigate('/');
     });
-    
+
     const filterPeriodLabel = await screen.findByText(/기간 설정/);
     expect(filterPeriodLabel).toBeTruthy();
 
@@ -40,7 +40,7 @@ describe('Main 페이지', () => {
     await act(async () => {
       router.navigate('/');
     });
-    
+
     const filterPeriodLabel = await screen.findByText(/종목 설정/);
     expect(filterPeriodLabel).toBeTruthy();
 
@@ -48,11 +48,10 @@ describe('Main 페이지', () => {
     expect(filterPeriodSelect).toBeTruthy();
 
     // 기본 값 확인
-    expect(screen.getByText("종목 선택")).toBeTruthy();
+    expect(screen.getByText('종목 선택')).toBeTruthy();
 
     // 값 변경
     await userEvent.selectOptions(filterPeriodSelect, 'eth');
     expect((filterPeriodSelect as HTMLSelectElement).value).toBe('eth');
   });
 });
-
