@@ -1,7 +1,7 @@
 import { MainPage } from '@web/pages/main/MainPage';
 import { RouterProvider, createBrowserRouter } from 'react-router';
 
-const router = createBrowserRouter([
+export const routes =[
   {
     path: '/',
     children: [
@@ -15,7 +15,9 @@ const router = createBrowserRouter([
       },
     ],
   },
-]);
+];
+
+const router = createBrowserRouter(routes);
 
 export function AppRouterProvider() {
   return <RouterProvider router={router} />;
