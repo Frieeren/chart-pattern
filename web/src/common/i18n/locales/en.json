@@ -1,0 +1,12 @@
+{
+  "filter": {
+    "title": "Filtering",
+    "interval": "Interval",
+    "symbol": "Symbol",
+    "selectSymbol": "Select Symbol",
+    "noSymbol": "No available symbols"
+  },
+  "chartList": {
+    "noChart": "No charts"
+  }
+}

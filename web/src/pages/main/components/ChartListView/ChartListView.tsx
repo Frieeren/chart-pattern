@@ -1,6 +1,8 @@
 import type { ChartItem } from '@web/shared/types/domain';
+import { Suspense, lazy } from 'react';
+import { useTranslation } from 'react-i18next';
 import { chartCard, chartCardHeader, chartCardTitle, chartListSection, emptyMessage } from './style.css';
-import { CandleStickChart } from '../SideChart/CandleStickChart';
+const CandleStickChart = lazy(() => import('../SideChart/CandleStickChart'));
 
 interface ChartCardProps {
   chart: ChartItem;
@@ -12,7 +14,9 @@ const ChartCard: React.FC<ChartCardProps> = ({ chart }) => {
       <div className={chartCardHeader}>
         <h4 className={chartCardTitle}>{chart.name}</h4>
       </div>
-      <CandleStickChart />
+      <Suspense>
+        <CandleStickChart />
+      </Suspense>
     </div>
   );
 };
@@ -22,6 +26,8 @@ interface ChartListViewProps {
 }
 
 export const ChartListView: React.FC<ChartListViewProps> = ({ chartItems }) => {
+  const { t } = useTranslation();
+
   return (
     <div className={chartListSection}>
       {chartItems.length > 0 ? (
@@ -31,7 +37,7 @@ export const ChartListView: React.FC<ChartListViewProps> = ({ chartItems }) => {
           ))}
         </>
       ) : (
-        <div className={emptyMessage}>유사한 차트가 존재하지 않습니다.</div>
+        <div className={emptyMessage}>{t('chartList.noChart')}</div>
       )}
     </div>
   );
