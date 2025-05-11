@@ -1,7 +1,8 @@
-import { DEFAULT_INTERVAL, DEFAULT_SYMBOL, SAMPLE_SYMBOLS } from '@web/shared/constants/filter';
+import { useSymbols } from '@web/shared/api/endpoints/symbols/symbols';
+import { DEFAULT_INTERVAL } from '@web/shared/constants/filter';
 import type { IntervalOption, SymbolOption } from '@web/shared/types/domain';
 import { type ValidationResult, safeValidateInterval, safeValidateSymbolId } from '@web/shared/utils/validator';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 export function useFilter<T>(initialValue: T, validator: (value: unknown) => ValidationResult<T>) {
   const [value, setValue] = useState<T>(initialValue);
@@ -32,13 +33,19 @@ export const useFilters = () => {
     error: intervalError,
   } = useFilter<IntervalOption>(DEFAULT_INTERVAL as IntervalOption, safeValidateInterval);
 
-  const [symbolId, setSymbolId] = useState<string | number | null>(DEFAULT_SYMBOL);
+  const [symbolId, setSymbolId] = useState<string | number | null>(null);
   const [symbol, setSymbol] = useState<SymbolOption | null>(null);
   const [symbolError, setSymbolError] = useState<string | null>(null);
-  /**
-   * TODO: 서버에서 가져오는 실제 종목 목록
-   */
-  const symbols: SymbolOption[] = SAMPLE_SYMBOLS;
+
+  const { data } = useSymbols();
+  const symbols: SymbolOption[] = useMemo(() => {
+    if (!data) return [];
+    return data.symbols.map(sym => ({
+      id: sym,
+      name: sym,
+      code: sym,
+    }));
+  }, [data]);
 
   const findSymbolById = useCallback(
     (id: string | number): SymbolOption | null => {

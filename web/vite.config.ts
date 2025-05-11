@@ -13,6 +13,16 @@ export default defineConfig(({ mode }) => {
     preview: {
       allowedHosts: [env.VITE_ADDITIONAL_SERVER_ALLOWED_HOSTS],
     },
+    server: {
+      port: 8000,
+      proxy: {
+        '/api': {
+          target: 'http://localhost:8001',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^api/, '/api')
+        }
+      }
+    },
     build: {
       rollupOptions: {
         output: {

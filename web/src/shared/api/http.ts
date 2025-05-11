@@ -2,7 +2,7 @@ import ky, { HTTPError } from 'ky';
 import { BadRequestError, InternetServerError, NotFoundError } from '../exception/APIError';
 import { BaseError } from '../exception/BaseError';
 
-const baseURL = 'http://localhost:8000';
+const baseURL = '';
 const TIMEOUT = 60000;
 
 export interface ErrorType<Error> {
@@ -58,7 +58,7 @@ const parseResponse = async <T>(response: Response): Promise<T> => {
   const contentType = response.headers.get('content-type');
   const jsonParseAvailable = contentType && /json/.test(contentType);
 
-  return (jsonParseAvailable ? await response.json() : await response.text()) as T;
+  return jsonParseAvailable ? ((await response.json()) as T) : ((await response.text()) as T);
 };
 
 export const httpClient = <T>(

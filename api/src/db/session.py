@@ -1,8 +1,7 @@
 import os
-from datetime import datetime
 
 from dotenv import load_dotenv
-from sqlalchemy import Column, DateTime, Integer, String, create_engine
+from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
@@ -38,23 +37,11 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 
-# User 모델 정의
-class User(Base):
-  __tablename__ = "users"
-
-  id = Column(Integer, primary_key=True, autoincrement=True)
-  username = Column(String(50), nullable=False, unique=True)
-  email = Column(String(100), nullable=False, unique=True)
-  created_at = Column(DateTime, default=datetime.utcnow)
-
-
-# 모델과 데이터베이스 테이블을 동기화하는 함수
-def init_db():
-  Base.metadata.create_all(bind=engine)
-
-
 # 데이터베이스 세션 의존성 설정하는 함수
 def get_db():
+  """
+  데이터베이스 세션을 생성하고 관리하는 의존성 함수
+  """
   db = SessionLocal()
   try:
     yield db

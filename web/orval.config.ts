@@ -11,7 +11,7 @@ export default {
       target: "src/shared/api/endpoints",
       schemas: "src/shared/api/models",
       client: "react-query",
-      baseUrl: "http://localhost:8000",
+      baseUrl: "http://localhost:8000/api",
       mock: true,
       biome: true,
       override: {
@@ -30,6 +30,9 @@ export default {
           }
 
           return verb;
+        },
+        contentType: {
+          include: ['application/json'],
         },
       },
     },
