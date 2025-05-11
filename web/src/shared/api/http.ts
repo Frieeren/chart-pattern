@@ -64,7 +64,7 @@ const parseResponse = async <T>(response: Response): Promise<T> => {
 export const httpClient = <T>(
   config: RequestInit & {
     url: string;
-    params?: Record<string, string | string[] | undefined>;
+    params?: Record<string, string | number | string[] | undefined>;
     data?: any;
     json?: any;
   }
