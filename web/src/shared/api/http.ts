@@ -2,7 +2,7 @@ import ky, { HTTPError } from 'ky';
 import { BadRequestError, InternetServerError, NotFoundError } from '../exception/APIError';
 import { BaseError } from '../exception/BaseError';
 
-const baseURL = '';
+const baseURL = import.meta.env.DEV ? 'http://localhost:8000/' : import.meta.env.VITE_API_BASE_URL;
 const TIMEOUT = 60000;
 
 export interface ErrorType<Error> {

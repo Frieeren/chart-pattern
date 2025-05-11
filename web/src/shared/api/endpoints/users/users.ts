@@ -37,11 +37,11 @@ import type { ErrorType } from '../../http';
  * @summary Read Users
  */
 export const readUsersUsersGet = (params?: ReadUsersUsersGetParams, signal?: AbortSignal) => {
-  return httpClient<UserResponse[]>({ url: 'http://localhost:8000/api/users/', method: 'GET', params, signal });
+  return httpClient<UserResponse[]>({ url: 'api/users/', method: 'GET', params, signal });
 };
 
 export const getReadUsersUsersGetQueryKey = (params?: ReadUsersUsersGetParams) => {
-  return ['http://localhost:8000/api/users/', ...(params ? [params] : [])] as const;
+  return ['api/users/', ...(params ? [params] : [])] as const;
 };
 
 export const getReadUsersUsersGetInfiniteQueryOptions = <
@@ -303,7 +303,7 @@ export function useReadUsersUsersGetSuspense<
  */
 export const createUserUsersPost = (userCreate: UserCreate, signal?: AbortSignal) => {
   return httpClient<UserResponse>({
-    url: 'http://localhost:8000/api/users/',
+    url: 'api/users/',
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     data: userCreate,
@@ -365,11 +365,11 @@ export const useCreateUserUsersPost = <TError = ErrorType<HTTPValidationError>, 
  * @summary Read User
  */
 export const readUserUsersUserIdGet = (userId: number, signal?: AbortSignal) => {
-  return httpClient<UserResponse>({ url: `http://localhost:8000/api/users/${userId}`, method: 'GET', signal });
+  return httpClient<UserResponse>({ url: `api/users/${userId}`, method: 'GET', signal });
 };
 
 export const getReadUserUsersUserIdGetQueryKey = (userId: number) => {
-  return [`http://localhost:8000/api/users/${userId}`] as const;
+  return [`api/users/${userId}`] as const;
 };
 
 export const getReadUserUsersUserIdGetInfiniteQueryOptions = <

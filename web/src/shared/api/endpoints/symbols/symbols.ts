@@ -34,11 +34,11 @@ import type { ErrorType } from '../../http';
  * @summary 종목 코드 리스트 조회
  */
 export const symbols = (signal?: AbortSignal) => {
-  return httpClient<Symbols>({ url: 'http://localhost:8000/api/v1/symbols', method: 'GET', signal });
+  return httpClient<Symbols>({ url: 'api/v1/symbols', method: 'GET', signal });
 };
 
 export const getSymbolsQueryKey = () => {
-  return ['http://localhost:8000/api/v1/symbols'] as const;
+  return ['api/v1/symbols'] as const;
 };
 
 export const getSymbolsInfiniteQueryOptions = <

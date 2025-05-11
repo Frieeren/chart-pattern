@@ -19,7 +19,7 @@ import type { ErrorType } from '../../http';
  */
 export const chartMatchingList = (chartMatchingRequest: ChartMatchingRequest, signal?: AbortSignal) => {
   return httpClient<ChartMatchingResponse[]>({
-    url: 'http://localhost:8000/api/v1/chart_matching_list',
+    url: 'api/v1/chart_matching_list',
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     data: chartMatchingRequest,
