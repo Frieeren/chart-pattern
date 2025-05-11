@@ -32,15 +32,15 @@ export const useFilters = () => {
     updateValue: onChangeInterval,
     error: intervalError,
   } = useFilter<IntervalOption>(DEFAULT_INTERVAL as IntervalOption, safeValidateInterval);
-  
+
   const [symbolId, setSymbolId] = useState<string | number | null>(null);
   const [symbol, setSymbol] = useState<SymbolOption | null>(null);
   const [symbolError, setSymbolError] = useState<string | null>(null);
-  
+
   const { data } = useSymbols();
   const symbols: SymbolOption[] = useMemo(() => {
     if (!data) return [];
-    return data.symbols.map((sym) => ({
+    return data.symbols.map(sym => ({
       id: sym,
       name: sym,
       code: sym,

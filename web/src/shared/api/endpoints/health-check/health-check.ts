@@ -32,11 +32,11 @@ import type { ErrorType } from '../../http';
  * @summary API 서버 상태 확인
  */
 export const healthCheck = (signal?: AbortSignal) => {
-  return httpClient<unknown>({ url: 'http://localhost:3000/api/health', method: 'GET', signal });
+  return httpClient<unknown>({ url: 'http://localhost:8000/api/health', method: 'GET', signal });
 };
 
 export const getHealthCheckQueryKey = () => {
-  return ['http://localhost:3000/api/health'] as const;
+  return ['http://localhost:8000/api/health'] as const;
 };
 
 export const getHealthCheckInfiniteQueryOptions = <

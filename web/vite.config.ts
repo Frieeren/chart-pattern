@@ -14,7 +14,7 @@ export default defineConfig(({ mode }) => {
       allowedHosts: [env.VITE_ADDITIONAL_SERVER_ALLOWED_HOSTS],
     },
     server: {
-      port: 3000,
+      port: 8000,
       proxy: {
         '/api': {
           target: 'http://localhost:8001',
