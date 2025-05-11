@@ -1,0 +1,12 @@
+{
+  "filter": {
+    "title": "필터링",
+    "interval": "기간 설정",
+    "symbol": "종목 설정",
+    "selectSymbol": "종목 선택",
+    "noSymbol": "선택 가능한 종목이 없습니다."
+  },
+  "chartList": {
+    "noChart": "차트가 존재하지 않습니다."
+  }
+}
