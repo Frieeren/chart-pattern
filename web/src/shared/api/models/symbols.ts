@@ -6,9 +6,7 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface ChartData {
-  /** 날짜 및 시간 */
-  x: string;
-  /** [시가, 고가, 종가, 저가] */
-  y: number[];
+export interface Symbols {
+  /** 종목 코드 리스트 (예: ['BTCUSDT', 'ETHUSDT']) */
+  symbols: string[];
 }

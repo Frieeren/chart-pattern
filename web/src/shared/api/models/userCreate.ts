@@ -6,9 +6,7 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface ChartData {
-  /** 날짜 및 시간 */
-  x: string;
-  /** [시가, 고가, 종가, 저가] */
-  y: number[];
+export interface UserCreate {
+  email: string;
+  username: string;
 }
