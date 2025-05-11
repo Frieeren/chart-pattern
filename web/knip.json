@@ -1,0 +1,15 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "entry": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.spec.ts"
+  ],
+  "ignoreDependencies": [
+    "husky"
+  ],
+  "project": [
+    "src/**/*.ts",
+    "src/**/*.tsx"
+  ]
+}
