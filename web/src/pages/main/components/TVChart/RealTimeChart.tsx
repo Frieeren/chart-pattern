@@ -11,7 +11,15 @@ interface TVRealTimeChartProps {
 export function RealTimeChart({ symbol, interval, range }: TVRealTimeChartProps) {
   return (
     <div className={chartContainer}>
-      <AdvancedRealTimeChart hide_top_toolbar theme="dark" symbol={symbol} interval={interval} range={range} autosize />
+      <AdvancedRealTimeChart
+        timezone="Asia/Seoul"
+        hide_top_toolbar
+        theme="dark"
+        symbol={symbol}
+        interval={interval}
+        range={range}
+        autosize
+      />
     </div>
   );
 }
