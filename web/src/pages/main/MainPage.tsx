@@ -1,4 +1,5 @@
 import { themeClass } from '@web/common/style/theme.css';
+import { Helmet } from '@web/shared/components/Helmet';
 import { SAMPLE_CHARTS } from '@web/shared/constants/filter';
 import type { ChartItem } from '@web/shared/types/domain';
 import { ChartListView } from './components/ChartListView';
@@ -14,6 +15,7 @@ export function MainPage() {
 
   return (
     <div className={`${themeClass} ${container}`}>
+      <Helmet title="chart pattern | home" />
       <div className={filterArea}>
         <FilterView
           interval={interval}
