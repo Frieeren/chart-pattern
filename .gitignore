@@ -1,0 +1,15 @@
+# let's encrypt
+init-letsencrypt.sh
+infra/nginx/letsencrypt/
+infra/nginx/www/
+
+# data
+data/
+infra/mysql/data/
+
+# etc
+.DS_Store
+
+# env
+.env.*
+.env
