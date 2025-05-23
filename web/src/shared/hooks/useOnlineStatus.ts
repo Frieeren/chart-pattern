@@ -3,7 +3,7 @@ import { useEffect, useSyncExternalStore } from 'react';
 /**
  * @param callback 온라인 상태 변경 시 호출할 콜백 함수
  */
-export function useOnlineStatus(callback: (isOnline: boolean) => void): void {
+export function useOnlineStatus(callback?: (isOnline: boolean) => void): boolean {
   const isOnline = useSyncExternalStore<boolean>(
     cb => {
       window.addEventListener('online', cb);
@@ -17,6 +17,8 @@ export function useOnlineStatus(callback: (isOnline: boolean) => void): void {
   );
 
   useEffect(() => {
-    callback(isOnline);
+    callback?.(isOnline);
   }, [callback, isOnline]);
+
+  return isOnline;
 }

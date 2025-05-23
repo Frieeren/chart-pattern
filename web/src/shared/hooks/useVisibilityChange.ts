@@ -3,7 +3,7 @@ import { useEffect, useSyncExternalStore } from 'react';
 /**
  * @param callback Visibility 변경 시 호출할 콜백 함수
  */
-export function useVisibilityChange(callback: (state: 'visible' | 'hidden') => void): void {
+export function useVisibilityChange(callback?: (state: 'visible' | 'hidden') => void): 'visible' | 'hidden' {
   const visibilityState = useSyncExternalStore(
     cb => {
       document.addEventListener('visibilitychange', cb);
@@ -13,6 +13,8 @@ export function useVisibilityChange(callback: (state: 'visible' | 'hidden') => v
   );
 
   useEffect(() => {
-    callback(visibilityState);
+    callback?.(visibilityState);
   }, [callback, visibilityState]);
+
+  return visibilityState;
 }
