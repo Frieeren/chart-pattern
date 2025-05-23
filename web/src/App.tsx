@@ -1,9 +1,9 @@
-import { useGARouteTracking } from '@web/shared/hooks/useGARouteTracking';
+import { useGA4Init } from '@web/shared/hooks/useGA';
 import { RQProvider } from '@web/shared/providers/RQProvider';
 import { AppRouterProvider } from '@web/shared/providers/RouterProvider';
 
 function App() {
-  useGARouteTracking();
+  useGA4Init();
 
   return (
     <RQProvider>
