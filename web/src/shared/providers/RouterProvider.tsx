@@ -1,11 +1,19 @@
 import { Suspense, lazy } from 'react';
-import { RouterProvider, createBrowserRouter } from 'react-router';
+import { Outlet, RouterProvider, createBrowserRouter } from 'react-router';
+import { useGARouteTracking } from '../hooks/useGA';
 
 const MainPage = lazy(() => import('@web/pages/main/MainPage'));
+
+const RootLayout = () => {
+  useGARouteTracking();
+
+  return <Outlet />;
+};
 
 export const routes = [
   {
     path: '/',
+    Component: RootLayout,
     children: [
       {
         index: true,
