@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.api.v1.router import api_router
+from src.scheduler.scheduler import init_scheduler
 
 app = FastAPI(
   title="Chart Pattern API",
@@ -26,3 +27,6 @@ app.add_middleware(
 
 # API 라우터 등록
 app.include_router(api_router)
+
+# 스케줄러 초기화
+init_scheduler(app)

@@ -1,5 +1,7 @@
-from .chart_matching_service import ChartMatchingService
+from .chart_similarity_service import ChartSimilarityService
 from .symbols_service import SymbolsService
-from .user_service import UserService
 
-__all__ = ["UserService", "SymbolsService", "ChartMatchingService"]
+__all__ = [
+  "SymbolsService",
+  "ChartSimilarityService",
+]

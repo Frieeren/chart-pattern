@@ -5,12 +5,15 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "apscheduler>=3.11.0",
     "cryptography>=44.0.3",
     "fastapi[standard]>=0.115.12",
+    "pandas>=2.2.3",
     "pydantic>=2.11.4",
     "pymysql>=1.1.1",
     "python-dotenv>=1.1.0",
     "requests>=2.32.3",
+    "scipy>=1.15.3",
     "sqlalchemy>=2.0.40",
     "uvicorn>=0.34.2",
 ]
