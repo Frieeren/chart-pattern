@@ -73,10 +73,10 @@ def collect_and_similarity_job(targets):
 def register_jobs():
   """스케줄러 작업을 등록합니다."""
 
-  # add_job(
-  #   collect_and_similarity_job,
-  #   "cron",
-  #   minute="0,30",
-  #   args=(TARGET_TABLES,),
-  #   next_run_time=datetime.now(),
-  # )
+  add_job(
+    collect_and_similarity_job,
+    "cron",
+    minute="0,30",
+    args=(TARGET_TABLES,),
+    next_run_time=datetime.now(),
+  )
