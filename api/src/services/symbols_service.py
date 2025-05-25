@@ -8,17 +8,10 @@ class SymbolsService:
 
   def get_symbols(self) -> Symbols:
     """
-    바이낸스에서 USDT 종목 코드 리스트를 가져옵니다.
+    사용 가능한 모든 심볼 정보를 가져옵니다.
     """
     try:
       return self.repository.get_all_symbols()
 
     except Exception:
-      # API 요청 실패 시 기본 심볼 리스트 반환
-      return Symbols(
-        symbols=[
-          "BTCUSDT",
-          "ETHUSDT",
-          "XRPUSDT",
-        ]
-      )
+      return Symbols(symbols=["BTCUSDT", "ETHUSDT"])

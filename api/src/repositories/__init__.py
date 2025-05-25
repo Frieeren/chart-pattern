@@ -1,3 +1,3 @@
-from .user_repository import UserRepository
+from .chart_similarity_repository import ChartSimilarityRepository
 
-__all__ = ["UserRepository"]
+__all__ = ["ChartSimilarityRepository"]
