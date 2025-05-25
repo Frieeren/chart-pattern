@@ -13,7 +13,7 @@
     "test": "vitest",
     "prepare": "husky || true",
     "lint-staged": "lint-staged",
-    "generate:api": "orval --config ./orval.config.ts"
+    "generate:api": "orval --config ./orval.config.ts && pnpm run check:fix"
   },
   "dependencies": {
     "@orval/core": "^7.9.0",
