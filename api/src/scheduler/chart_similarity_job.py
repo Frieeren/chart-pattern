@@ -39,6 +39,19 @@ def get_table_data(
     session.close()
 
 
+def get_similarity_table_latest_time(symbol: str):
+  session = SessionLocal()
+  table_name = "chart_similarity"
+
+  try:
+    query = text(f"SELECT MAX(time) FROM {table_name} WHERE symbol = :symbol")
+    result = session.execute(query, {"symbol": symbol}).fetchone()
+    return result[0]
+
+  finally:
+    session.close()
+
+
 def prepare_data(df):
   df = df.rename(
     columns={
@@ -314,6 +327,15 @@ def chart_similarity_job(symbol, table_name, range, window_size=300, top_n=10):
     data = prepare_data(df)
     target_start = data.index[-window_size]
     target_end = data.index[-1]
+
+    latest_time = get_similarity_table_latest_time(symbol)
+
+    if latest_time is not None and pd.Timestamp(latest_time) == pd.Timestamp(
+      target_end
+    ):
+      logger.info(f"{symbol} {target_end} 유사도 분석이 이미 완료되어 건너뜀")
+      return
+
     similar_patterns = find_similar_patterns_candleonly(
       data,
       pd.Timestamp(target_start),

@@ -78,5 +78,6 @@ def register_jobs():
     "cron",
     minute="0,30",
     args=(TARGET_TABLES,),
+    misfire_grace_time=None,
     next_run_time=datetime.now(),
   )
