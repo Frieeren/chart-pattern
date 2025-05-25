@@ -10,6 +10,17 @@ export const chartListSection = style({
   color: '#e0e0e0',
 });
 
+export const chartListHeader = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+});
+
+export const chartListTitle = style({
+  fontSize: 14,
+  fontWeight: 600,
+});
+
 export const chartCard = style({
   display: 'flex',
   flexDirection: 'column',
@@ -28,14 +39,15 @@ export const chartCard = style({
 export const chartCardHeader = style({
   display: 'flex',
   alignItems: 'center',
+  flexDirection: 'column',
   position: 'absolute',
-  top: '12px',
-  left: '12px',
+  bottom: 12,
+  left: 12,
 });
 
 export const chartCardTitle = style({
   margin: 0,
-  fontSize: '14px',
+  fontSize: 12,
   fontWeight: '500',
 });
 

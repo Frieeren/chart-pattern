@@ -1,39 +1,56 @@
-import type { ChartItem } from '@web/shared/types/domain';
+import type { ChartSimilarityBase, ChartSimilarityList } from '@web/shared/api/models';
+import type { SymbolOption } from '@web/shared/types/domain';
 import { Suspense, lazy } from 'react';
 import { useTranslation } from 'react-i18next';
-import { chartCard, chartCardHeader, chartCardTitle, chartListSection, emptyMessage } from './style.css';
+import {
+  chartCard,
+  chartCardHeader,
+  chartCardTitle,
+  chartListHeader,
+  chartListSection,
+  chartListTitle,
+  emptyMessage,
+} from './style.css';
+
 const CandleStickChart = lazy(() => import('../SideChart/CandleStickChart'));
 
 interface ChartCardProps {
-  chart: ChartItem;
+  chart: ChartSimilarityBase;
 }
 
 const ChartCard: React.FC<ChartCardProps> = ({ chart }) => {
   return (
     <div className={chartCard}>
       <div className={chartCardHeader}>
-        <h4 className={chartCardTitle}>{chart.name}</h4>
+        <h4 className={chartCardTitle}>
+          {chart.start_time.replace('T', ' ')} ~<br />
+          {chart.end_time.replace('T', ' ')}
+        </h4>
       </div>
       <Suspense>
-        <CandleStickChart />
+        <CandleStickChart data={chart.price_data} />
       </Suspense>
     </div>
   );
 };
 
 interface ChartListViewProps {
-  chartItems: ChartItem[];
+  symbol: SymbolOption | null;
+  chartItems?: ChartSimilarityList;
 }
 
-export const ChartListView: React.FC<ChartListViewProps> = ({ chartItems }) => {
+export const ChartListView: React.FC<ChartListViewProps> = ({ symbol, chartItems }) => {
   const { t } = useTranslation();
 
   return (
     <div className={chartListSection}>
-      {chartItems.length > 0 ? (
+      <div className={chartListHeader}>
+        <h4 className={chartListTitle}>{symbol?.id}</h4>
+      </div>
+      {chartItems?.similarities && chartItems?.similarities.length > 0 ? (
         <>
-          {chartItems.map(chart => (
-            <ChartCard key={chart.id} chart={chart} />
+          {chartItems?.similarities.map(chart => (
+            <ChartCard key={`${chart.symbol}-${chart.start_time}`} chart={chart} />
           ))}
         </>
       ) : (
