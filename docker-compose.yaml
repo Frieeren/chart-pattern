@@ -12,7 +12,7 @@ services:
       - ./infra/nginx/letsencrypt:/etc/letsencrypt
       - ./infra/nginx/www:/var/www/certbot
     environment:
-      - TZ=Asia/Seoul
+      - TZ: Asia/Seoul
 
   certbot:
     image: certbot/certbot
@@ -52,5 +52,5 @@ services:
     ports:
       - '8002:8002'
     environment:
-      - TZ=Asia/Seoul
+      - TZ: Asia/Seoul
     
