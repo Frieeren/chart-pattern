@@ -12,7 +12,7 @@ services:
       - ./infra/nginx/letsencrypt:/etc/letsencrypt
       - ./infra/nginx/www:/var/www/certbot
     environment:
-      - TZ=Asia/Seoul
+      - TZ: Asia/Seoul
 
   certbot:
     image: certbot/certbot
@@ -30,6 +30,7 @@ services:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      TZ: Asia/Seoul
     ports:
       - '3306:3306'
     volumes:
@@ -41,6 +42,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - '8001:8001'
+    environment:
+      - TZ=Asia/Seoul
 
   web: 
     build:
@@ -48,4 +51,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - '8002:8002'
+    environment:
+      - TZ: Asia/Seoul
     
