@@ -6,6 +6,7 @@ infra/nginx/www/
 # data
 data/
 infra/mysql/data/
+infra/nginx/logs/
 
 # etc
 .DS_Store
