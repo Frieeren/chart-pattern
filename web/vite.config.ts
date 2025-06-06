@@ -5,6 +5,7 @@ import tsconfigPaths from "vite-tsconfig-paths";
 import { vanillaExtractPlugin } from "@vanilla-extract/vite-plugin";
 import { compression } from "vite-plugin-compression2";
 import { visualizer } from "rollup-plugin-visualizer";
+import { sentryVitePlugin } from "@sentry/vite-plugin";
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd());
@@ -16,14 +17,15 @@ export default defineConfig(({ mode }) => {
     server: {
       port: 8000,
       proxy: {
-        '/api': {
-          target: 'http://localhost:8001',
+        "/api": {
+          target: "http://localhost:8001",
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^api/, '/api')
-        }
-      }
+          rewrite: (path) => path.replace(/^api/, "/api"),
+        },
+      },
     },
     build: {
+      sourcemap: true,
       rollupOptions: {
         output: {
           manualChunks: (id: string) => {
@@ -46,6 +48,15 @@ export default defineConfig(({ mode }) => {
       vanillaExtractPlugin(),
       compression(),
       visualizer(),
+      sentryVitePlugin({
+        org: env.SENTRY_ORG,
+        project: env.SENTRY_PROJECT,
+        authToken: env.SENTRY_AUTH_TOKEN,
+        sourcemaps: {
+          assets: "./dist/**",
+          filesToDeleteAfterUpload: "./dist/**/*.map",
+        },
+      }),
     ],
   };
 });

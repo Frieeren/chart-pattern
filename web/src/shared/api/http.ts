@@ -110,8 +110,7 @@ export const httpClient = <T>(
       Sentry.withScope(scope => {
         scope.setFingerprint([kyOptions.method, error.response?.status, config.url]);
         scope.setContext('response', error.response);
-        scope.setContext('os', error.request?.header['User-Agent']);
-        scope.setLevel('fatal');
+        scope.setLevel('fatal'); // error, warning 제외 fatal
         scope.setTag('source', 'api');
 
         Sentry.captureException(error);

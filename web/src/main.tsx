@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client';
 import './common/style/global.css';
 import App from './App.tsx';
 import './common/i18n';
+import './common/sentry/instrument';
 
 createRoot(document.getElementById('root')!, {
   onUncaughtError: Sentry.reactErrorHandler((error, errorInfo) => {
