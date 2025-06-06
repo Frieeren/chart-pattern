@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/react';
 import ky, { HTTPError } from 'ky';
 import { BadRequestError, InternetServerError, NotFoundError } from '../exception/APIError';
 import { BaseError } from '../exception/BaseError';
@@ -106,6 +107,15 @@ export const httpClient = <T>(
   const promise = instance(config.url, kyOptions)
     .then(response => parseResponse<T>(response))
     .catch(error => {
+      Sentry.withScope(scope => {
+        scope.setFingerprint([kyOptions.method, error.response?.status, config.url]);
+        scope.setContext('response', error.response);
+        scope.setLevel('fatal'); // error, warning 제외 fatal
+        scope.setTag('source', 'api');
+
+        Sentry.captureException(error);
+      });
+
       if (error instanceof HTTPError || error instanceof BaseError) {
         throw error;
       }
