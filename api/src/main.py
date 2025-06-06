@@ -38,7 +38,7 @@ resource = Resource.create(
 tracer_provider = TracerProvider(resource=resource)
 trace.set_tracer_provider(tracer_provider)
 
-otlp_exporter = OTLPSpanExporter(endpoint="localhost:4317", insecure=True)
+otlp_exporter = OTLPSpanExporter(endpoint="http://lgtm:4317", insecure=True)
 span_processor = BatchSpanProcessor(otlp_exporter)
 trace.get_tracer_provider().add_span_processor(span_processor)
 
@@ -48,7 +48,7 @@ set_logger_provider(logger_provider)
 
 # 로그 프로세서 추가 (배치 처리로 성능 최적화)
 log_processor = BatchLogRecordProcessor(
-  OTLPLogExporter(endpoint="http://localhost:4317")
+  OTLPLogExporter(endpoint="http://lgtm:4317")
 )
 logger_provider.add_log_record_processor(log_processor)
 
