@@ -2,18 +2,25 @@ import logging
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from opentelemetry import trace
+
+# OpenTelemetry imports
+from opentelemetry import metrics, trace
 from opentelemetry._logs import set_logger_provider
 from opentelemetry.exporter.otlp.proto.grpc._log_exporter import OTLPLogExporter
+from opentelemetry.exporter.otlp.proto.grpc.metric_exporter import (
+  OTLPMetricExporter,
+)
 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import (
   OTLPSpanExporter,
 )
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from opentelemetry.instrumentation.logging import LoggingInstrumentor
 
-# 로깅 설정을 위한 추가 import
+# SDK imports
 from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
+from opentelemetry.sdk.metrics import MeterProvider
+from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
@@ -31,21 +38,36 @@ resource = Resource.create(
   }
 )
 
-# 기존 트레이싱 설정 유지
+# 트레이싱 설정
 tracer_provider = TracerProvider(resource=resource)
 trace.set_tracer_provider(tracer_provider)
 
-otlp_exporter = OTLPSpanExporter(endpoint="http://lgtm:4317", insecure=True)
-span_processor = BatchSpanProcessor(otlp_exporter)
-trace.get_tracer_provider().add_span_processor(span_processor)
+otlp_span_exporter = OTLPSpanExporter(
+  endpoint="http://localhost:4317", insecure=True
+)
+span_processor = BatchSpanProcessor(otlp_span_exporter)
+tracer_provider.add_span_processor(span_processor)
 
-# 로깅 설정 추가
+# 메트릭 설정
+metric_exporter = OTLPMetricExporter(
+  endpoint="http://localhost:4317", insecure=True, timeout=30
+)
+
+metric_reader = PeriodicExportingMetricReader(
+  exporter=metric_exporter, export_interval_millis=5000
+)
+
+meter_provider = MeterProvider(
+  resource=resource, metric_readers=[metric_reader]
+)
+metrics.set_meter_provider(meter_provider)
+
+# 로깅 설정
 logger_provider = LoggerProvider(resource=resource)
 set_logger_provider(logger_provider)
 
-# 로그 프로세서 추가 (배치 처리로 성능 최적화)
 log_processor = BatchLogRecordProcessor(
-  OTLPLogExporter(endpoint="http://lgtm:4317")
+  OTLPLogExporter(endpoint="http://localhost:4317")
 )
 logger_provider.add_log_record_processor(log_processor)
 
@@ -53,16 +75,21 @@ logger_provider.add_log_record_processor(log_processor)
 handler = LoggingHandler(logger_provider=logger_provider)
 logging.getLogger().addHandler(handler)
 
-# 로그-트레이스 상관관계 설정 (중요!)
+# 로그-트레이스 상관관계 설정
 LoggingInstrumentor().instrument(set_logging_format=True)
 
+# FastAPI 앱 생성
 app = FastAPI(
   title="Chart Pattern API",
   description="차트 패턴 매칭을 위한 API 서버",
   version="1.0.0",
   root_path="/api",
 )
-FastAPIInstrumentor.instrument_app(app, tracer_provider=tracer_provider)
+
+# FastAPI 자동 계측 (모든 provider 포함)
+FastAPIInstrumentor.instrument_app(
+  app, tracer_provider=tracer_provider, meter_provider=meter_provider
+)
 
 # CORS 미들웨어 설정
 app.add_middleware(
