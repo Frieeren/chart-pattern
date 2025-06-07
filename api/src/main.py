@@ -28,9 +28,6 @@ logging.basicConfig(level=logging.INFO)
 resource = Resource.create(
   {
     "service.name": "api-service",
-    "service.version": "1.0.0",
-    "environment": "development",
-    "deployment.environment": "local",
   }
 )
 
