@@ -31,6 +31,9 @@ from src.scheduler.scheduler import init_scheduler
 # 기본 로깅 설정
 logging.basicConfig(level=logging.INFO)
 
+# otlp 설정
+otlp_endpoint = "http://lgtm:4317"
+
 # 리소스 정보 설정 (서비스 식별을 위한 중요한 메타데이터)
 resource = Resource.create(
   {
@@ -42,15 +45,13 @@ resource = Resource.create(
 tracer_provider = TracerProvider(resource=resource)
 trace.set_tracer_provider(tracer_provider)
 
-otlp_span_exporter = OTLPSpanExporter(
-  endpoint="http://localhost:4317", insecure=True
-)
+otlp_span_exporter = OTLPSpanExporter(endpoint=otlp_endpoint, insecure=True)
 span_processor = BatchSpanProcessor(otlp_span_exporter)
 tracer_provider.add_span_processor(span_processor)
 
 # 메트릭 설정
 metric_exporter = OTLPMetricExporter(
-  endpoint="http://localhost:4317", insecure=True, timeout=30
+  endpoint=otlp_endpoint, insecure=True, timeout=30
 )
 
 metric_reader = PeriodicExportingMetricReader(
@@ -66,9 +67,7 @@ metrics.set_meter_provider(meter_provider)
 logger_provider = LoggerProvider(resource=resource)
 set_logger_provider(logger_provider)
 
-log_processor = BatchLogRecordProcessor(
-  OTLPLogExporter(endpoint="http://localhost:4317")
-)
+log_processor = BatchLogRecordProcessor(OTLPLogExporter(endpoint=otlp_endpoint))
 logger_provider.add_log_record_processor(log_processor)
 
 # OpenTelemetry 로깅 핸들러를 루트 로거에 추가
