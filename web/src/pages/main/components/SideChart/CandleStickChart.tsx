@@ -68,7 +68,7 @@ const CandleStickChart = ({ options, data }: CandleStickChartProps) => {
     return null;
   }
 
-  return <ReactApexChart options={chartOptions} series={[{ data: chartSeries }]} type="candlestick" />;
+  return <ReactApexChart height="100%" options={chartOptions} series={[{ data: chartSeries }]} type="candlestick" />;
 };
 
 export default CandleStickChart;
