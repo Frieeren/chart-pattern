@@ -62,13 +62,15 @@ const shimmer = keyframes({
   '100%': { backgroundPosition: '1000px 0' },
 });
 
+const CHART_HEIGHT = 160;
+
 export const chartCardSkeleton = style({
-  height: 160,
+  height: CHART_HEIGHT,
   animation: `${shimmer} 2s infinite linear`,
   background: 'linear-gradient(to right, #333333 4%, #444444 25%, #333333 36%)',
   backgroundSize: '1000px 100%',
 });
 
 export const chartCardChartWrapper = style({
-  height: 160,
+  height: CHART_HEIGHT,
 });
