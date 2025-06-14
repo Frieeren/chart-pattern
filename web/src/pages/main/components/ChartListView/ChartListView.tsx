@@ -4,7 +4,9 @@ import { Suspense, lazy } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   chartCard,
+  chartCardChartWrapper,
   chartCardHeader,
+  chartCardSkeleton,
   chartCardTitle,
   chartListHeader,
   chartListSection,
@@ -27,8 +29,10 @@ const ChartCard: React.FC<ChartCardProps> = ({ chart }) => {
           {chart.end_time.replace('T', ' ')}
         </h4>
       </div>
-      <Suspense>
-        <CandleStickChart data={chart.price_data} />
+      <Suspense fallback={<div className={chartCardSkeleton} />}>
+        <div className={chartCardChartWrapper}>
+          <CandleStickChart data={chart.price_data} />
+        </div>
       </Suspense>
     </div>
   );
