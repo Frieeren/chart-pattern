@@ -2,7 +2,9 @@ version: "3"
 services:
   nginx:
     container_name: nginx
-    image: nginx:stable-otel
+    build:
+      context: ./web
+      dockerfile: Dockerfile
     restart: always
     ports:
       - "80:80" # HTTP
@@ -43,14 +45,5 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8001:8001"
-    environment:
-      - TZ=Asia/Seoul
-
-  web:
-    build:
-      context: ./web
-      dockerfile: Dockerfile
-    ports:
-      - "8002:8002"
     environment:
       - TZ=Asia/Seoul
