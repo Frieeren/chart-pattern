@@ -1,0 +1,88 @@
+name: Web CI
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [opened, synchronize]
+    branches:
+      - main
+    paths:
+      - api/**
+      - '.github/workflows/api-ci.yml'
+
+jobs:
+  code-quality: # git hook 우회 방지
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: api
+    steps:
+      - name: 📦 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: 'api/.python-version'
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+
+      - name: 📦 Install dependencies
+        run: uv sync --frozen
+
+      - name: 🔍 Run ruff check
+        run: uv run ruff check --fix
+
+  # test:
+  #   runs-on: ubuntu-latest
+  #   defaults:
+  #     run:
+  #       working-directory: api
+  #   steps:
+  #     - name: 📦 Checkout Repository
+  #       uses: actions/checkout@v4
+
+  #     - name: 🐍 Setup Python
+  #       uses: actions/setup-python@v5
+  #       with:
+  #         python-version-file: 'api/.python-version'
+
+  #     - name: Install uv
+  #       uses: astral-sh/setup-uv@v3
+  #       with:
+  #         enable-cache: true
+
+  #     - name: 📦 Install dependencies
+  #       run: uv sync --frozen
+
+  #     - name: 🧪 Run tests
+  #       run: uv run pytest
+
+  build:
+    runs-on: ubuntu-latest
+    needs: [code-quality]
+    defaults:
+      run:
+        working-directory: api
+    steps:
+      - name: 📦 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: 'api/.python-version'
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+
+      - name: 📦 Install dependencies
+        run: uv sync --frozen
+
+      - name: 🛠️ Build
+        run: uv run build
