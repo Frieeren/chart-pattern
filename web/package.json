@@ -17,6 +17,7 @@
     "generate:api": "orval --config ./orval.config.ts && pnpm run check:fix"
   },
   "dependencies": {
+    "@channel.io/channel-web-sdk-loader": "^2.0.0",
     "@orval/core": "^7.9.0",
     "@sentry/react": "^9.27.0",
     "@sentry/vite-plugin": "^3.5.0",
