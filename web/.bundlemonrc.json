@@ -1,0 +1,21 @@
+{
+  "baseDir": "./dist",
+  "files": [
+    {
+      "path": "index.html",
+      "maxSize": "250kb",
+      "maxPercentIncrease": 10
+    },
+    {
+      "path": "assets/*.<hash>.js",
+      "maxSize": "500kb",
+      "maxPercentIncrease": 10
+    },
+    {
+      "path": "assets/*.<hash>.css",
+      "maxSize": "250kb",
+      "maxPercentIncrease": 10
+    }
+  ],
+  "reportOutput": ["github"]
+}
