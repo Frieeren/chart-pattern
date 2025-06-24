@@ -92,8 +92,10 @@ jobs:
       - name: 🏗️ Build
         run: pnpm build
 
-      - name: 📦 BundleMon
+      - name: 🔎 BundleMon
         uses: lironer/bundlemon-action@v1
+        with:
+          working-directory: web
         env:
           CI_COMMIT_SHA: ${{github.event.pull_request.head.sha || github.sha}}
           CI_COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
