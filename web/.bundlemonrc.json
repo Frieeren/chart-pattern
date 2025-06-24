@@ -16,5 +16,6 @@
       "maxSize": "50kb",
       "maxPercentIncrease": 10
     }
-  ]
+  ],
+  "reportOutput": ["github"]
 }
