@@ -60,6 +60,8 @@ export default defineConfig(({ mode }) => {
       }),
       legacy({
         targets: ['chrome >= 64', 'safari >= 12'],
+        polyfills: true,
+        modernPolyfills: true,
       }),
     ],
   };
