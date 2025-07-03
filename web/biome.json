@@ -3,7 +3,7 @@
   "vcs": { "enabled": false, "clientKind": "git", "useIgnoreFile": false },
   "files": {
     "ignoreUnknown": false,
-    "include": ["src/**/*.ts", "src/**/*.tsx", "**/*.ts"],
+    "include": ["**/*.ts", "**/*.tsx"],
     "ignore": ["dist", "node_modules", ".cache", ".vscode", ".git", ".env"]
   },
   "organizeImports": { "enabled": true },

@@ -1,16 +1,16 @@
-import type { GeneratorVerbOptions } from "@orval/core";
+import type { GeneratorVerbOptions } from '@orval/core';
 
 export default {
   api: {
     input: {
-      target: "./openapi.json",
+      target: './openapi.json',
     },
     output: {
-      mode: "tags-split",
-      clear: ["src/shared/api/endpoints", "src/shared/api/models"],
-      target: "src/shared/api/endpoints",
-      schemas: "src/shared/api/models",
-      client: "react-query",
+      mode: 'tags-split',
+      clear: ['src/shared/api/endpoints', 'src/shared/api/models'],
+      target: 'src/shared/api/endpoints',
+      schemas: 'src/shared/api/models',
+      client: 'react-query',
       baseUrl: 'api',
       mock: true,
       biome: true,
@@ -21,12 +21,12 @@ export default {
           useSuspenseQuery: true,
         },
         mutator: {
-          path: "./src/shared/api/http.ts",
-          name: "httpClient",
+          path: './src/shared/api/http.ts',
+          name: 'httpClient',
         },
         transformer: (verb: GeneratorVerbOptions): GeneratorVerbOptions => {
-          if (verb.response?.definition.errors === "void") {
-            verb.response.definition.errors = "null";
+          if (verb.response?.definition.errors === 'void') {
+            verb.response.definition.errors = 'null';
           }
 
           return verb;
@@ -39,14 +39,14 @@ export default {
   },
   zod: {
     input: {
-      target: "./openapi.json",
+      target: './openapi.json',
     },
     output: {
-      mode: "tags-split",
-      clear: ["src/shared/api/endpoints"],
-      client: "zod",
-      target: "src/shared/api/endpoints",
-      fileExtension: ".zod.ts",
+      mode: 'tags-split',
+      clear: ['src/shared/api/endpoints'],
+      client: 'zod',
+      target: 'src/shared/api/endpoints',
+      fileExtension: '.zod.ts',
       biome: true,
     },
   },
