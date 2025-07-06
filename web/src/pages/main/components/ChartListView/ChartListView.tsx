@@ -1,6 +1,7 @@
 import type { ChartSimilarityBase, ChartSimilarityList } from '@web/shared/api/models';
+import { AsyncBoundary } from '@web/shared/components/AsyncBoundary';
 import type { SymbolOption } from '@web/shared/types/domain';
-import { Suspense, lazy } from 'react';
+import { lazy } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   chartCard,
@@ -29,11 +30,14 @@ const ChartCard: React.FC<ChartCardProps> = ({ chart }) => {
           {chart.end_time.replace('T', ' ')}
         </h4>
       </div>
-      <Suspense fallback={<div className={chartCardSkeleton} />}>
+      <AsyncBoundary
+        pendingFallback={<div className={chartCardSkeleton} />}
+        rejectedFallback={<div className={chartCardSkeleton} />}
+      >
         <div className={chartCardChartWrapper}>
           <CandleStickChart data={chart.price_data} />
         </div>
-      </Suspense>
+      </AsyncBoundary>
     </div>
   );
 };
