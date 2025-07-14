@@ -1,0 +1,77 @@
+name: OpenAPI Generator
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+    paths:
+      - "api/**"
+    branches:
+      - main
+
+jobs:
+  generate-api:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: "api/.python-version"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+
+      - name: Install Python Dependencies
+        working-directory: api
+        run: |
+          uv sync --frozen
+
+      - name: Generate OpenAPI Schema
+        working-directory: api
+        run: |
+          uv run python -c "
+          import json
+          import sys
+          sys.path.append('.')
+
+          from src.main import app
+
+          openapi_schema = app.openapi()
+
+          with open('../web/openapi.json', 'w', encoding='utf-8') as f:
+            json.dump(openapi_schema, f, indent=2, ensure_ascii=False)
+
+          print(f'OpenAPI schema generated successfully! Schema saved to: ../web/openapi.json')
+          "
+
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: ⚙️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".node-version"
+          cache: "pnpm"
+          cache-dependency-path: "pnpm-lock.yaml"
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate API using Orval
+        working-directory: web
+        run: pnpm run generate:api
+
+      - name: Commit and push changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "feat(web): update API using oas [skip ci]"
+          commit_user_name: "frieeren[bot]"
+          commit_user_email: "frieeren[bot]@users.noreply.github.com"
+          branch: ${{ github.head_ref }}
+          push_options: --force-with-lease
