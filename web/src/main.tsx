@@ -5,6 +5,7 @@ import './common/style/global.css';
 import App from './App.tsx';
 import './common/i18n';
 import './common/sentry/instrument';
+import '@team-frieeren/components/styles.css';
 
 createRoot(document.getElementById('root')!, {
   onUncaughtError: Sentry.reactErrorHandler((error, errorInfo) => {
