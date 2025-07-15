@@ -5,6 +5,7 @@ on:
     types: [opened, synchronize]
     paths:
       - "api/**"
+      - "web/src/shared/api/http.ts"
     branches:
       - main
 
