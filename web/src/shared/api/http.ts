@@ -1,131 +1,60 @@
 import * as Sentry from '@sentry/react';
-import ky, { HTTPError } from 'ky';
+import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse, type AxiosError } from 'axios';
 import { BadRequestError, InternetServerError, NotFoundError } from '../exception/APIError';
 import { BaseError } from '../exception/BaseError';
 
 const baseURL = import.meta.env.DEV ? 'http://localhost:8000/' : import.meta.env.VITE_API_BASE_URL;
 const TIMEOUT = 60000;
 
-export interface ErrorType<Error> {
-  name: string;
-  message: string;
-  response?: {
-    status: number;
-    data: Error;
-  };
-}
-
-const instance = ky.create({
-  prefixUrl: baseURL,
+const instance: AxiosInstance = axios.create({
+  baseURL,
   headers: {
     'Content-Type': 'application/json',
   },
   timeout: TIMEOUT,
-  hooks: {
-    beforeError: [
-      async error => {
-        if (error instanceof HTTPError) {
-          const { response } = error;
-          const status = response.status;
-
-          let data: unknown;
-          try {
-            data = await response.json();
-          } catch (e) {
-            return error;
-          }
-
-          const message = typeof data === 'object' && data !== null && 'message' in data ? String(data.message) : null;
-
-          switch (status) {
-            case 400:
-              throw new BadRequestError(message || 'Bad Request');
-            case 404:
-              throw new NotFoundError(message || 'Not Found');
-            case 500:
-              throw new InternetServerError(message || 'Internal Server Error');
-            default:
-              throw new BaseError(status, message || 'An error occurred');
-          }
-        }
-
-        return error;
-      },
-    ],
-  },
 });
 
-const parseResponse = async <T>(response: Response): Promise<T> => {
-  const contentType = response.headers.get('content-type');
-  const jsonParseAvailable = contentType && /json/.test(contentType);
+instance.interceptors.response.use(
+  (response: AxiosResponse) => response,
+  async (error: AxiosError) => {
+    if (error.response) {
+      const { status, data } = error.response;
+      const message =
+        typeof data === 'object' && data !== null && 'message' in data ? String((data as any).message) : null;
 
-  return jsonParseAvailable ? ((await response.json()) as T) : ((await response.text()) as T);
-};
-
-export const httpClient = <T>(
-  config: RequestInit & {
-    url: string;
-    params?: Record<string, string | number | string[] | undefined>;
-    data?: any;
-    json?: any;
-  }
-): Promise<T> => {
-  const kyOptions: Record<string, unknown> = {};
-
-  if (config.method) {
-    kyOptions.method = config.method;
-  }
-
-  if (config.headers) {
-    if (config.headers instanceof Headers) {
-      const headerObj: Record<string, string> = {};
-      config.headers.forEach((value, key) => {
-        headerObj[key] = value;
-      });
-      kyOptions.headers = headerObj;
-    } else {
-      kyOptions.headers = config.headers;
+      switch (status) {
+        case 400:
+          throw new BadRequestError(message || 'Bad Request');
+        case 404:
+          throw new NotFoundError(message || 'Not Found');
+        case 500:
+          throw new InternetServerError(message || 'Internal Server Error');
+        default:
+          throw new BaseError(status, message || 'An error occurred');
+      }
     }
+    return Promise.reject(error);
   }
+);
 
-  if (config.params) {
-    kyOptions.searchParams = config.params;
-  }
-
-  if (config.data) {
-    kyOptions.json = config.data;
-  } else if (config.json) {
-    kyOptions.json = config.json;
-  } else if (config.body && typeof config.body === 'string') {
-    try {
-      kyOptions.json = JSON.parse(config.body);
-    } catch {
-      kyOptions.body = config.body;
-    }
-  }
-
-  const promise = instance(config.url, kyOptions)
-    .then(response => parseResponse<T>(response))
+export const httpClient = <T>(axiosConfig: AxiosRequestConfig): Promise<T> => {
+  const promise = instance(axiosConfig)
+    .then((response: AxiosResponse<T>) => response.data)
     .catch(error => {
       Sentry.withScope(scope => {
-        scope.setFingerprint([kyOptions.method, error.response?.status, config.url]);
+        scope.setFingerprint([axiosConfig.method, error.response?.status, axiosConfig.url]);
         scope.setContext('response', error.response);
-        scope.setLevel('fatal'); // error, warning 제외 fatal
+        scope.setLevel('fatal');
         scope.setTag('source', 'api');
 
         Sentry.captureException(error);
       });
 
-      if (error instanceof HTTPError || error instanceof BaseError) {
+      if (error instanceof BaseError) {
         throw error;
       }
       throw new Error(`Request failed: ${(error as Error).message}`);
     });
-
-  // @ts-ignore
-  promise.cancel = () => {
-    console.warn('Cancel requested but ky does not support native cancellation');
-  };
 
   return promise;
 };
