@@ -20,7 +20,9 @@ instance.interceptors.response.use(
     if (error.response) {
       const { status, data } = error.response;
       const message =
-        typeof data === 'object' && data !== null && 'message' in data ? String((data as any).message) : null;
+        typeof data === 'object' && data !== null && 'message' in data && typeof data.message === 'string'
+          ? data.message
+          : 'An error occurred';
 
       switch (status) {
         case 400:
@@ -33,7 +35,7 @@ instance.interceptors.response.use(
           throw new BaseError(status, message || 'An error occurred');
       }
     }
-    return Promise.reject(error);
+    return error;
   }
 );
 
