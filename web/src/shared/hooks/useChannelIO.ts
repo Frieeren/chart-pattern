@@ -1,20 +1,26 @@
 import * as ChannelService from '@channel.io/channel-web-sdk-loader';
 import { useEffect, useRef } from 'react';
+import { useLocation } from 'react-router';
 
-interface UseChannelIOOptions {
-  disabledPaths?: RegExp[];
+const isFeatureEnabled = import.meta.env.VITE_FEATURE_CHANNELIO === 'true';
+const pluginKey = import.meta.env.VITE_CHANNELIO_PLUGIN_KEY;
+
+function isChannelIOEnabled() {
+  if (!isFeatureEnabled || !pluginKey) {
+    if (import.meta.env.DEV) {
+      console.warn('ChannelIO is disabled');
+    }
+    return false;
+  }
+  return true;
 }
 
-export function useChannelIO({ disabledPaths = [] }: UseChannelIOOptions = {}) {
-  const isChannelIOEnabled = import.meta.env.VITE_FEATURE_CHANNELIO === 'true';
-  const pluginKey = import.meta.env.VITE_CHANNELIO_PLUGIN_KEY;
+export function useChannelIOInit() {
+  const isEnabled = isChannelIOEnabled();
   const initRef = useRef(false);
 
   useEffect(() => {
-    if (!isChannelIOEnabled || !pluginKey) {
-      if (import.meta.env.DEV) {
-        console.warn('ChannelIO configuration missing');
-      }
+    if (!isEnabled) {
       return;
     }
 
@@ -32,22 +38,26 @@ export function useChannelIO({ disabledPaths = [] }: UseChannelIOOptions = {}) {
       initRef.current = false;
       ChannelService.shutdown();
     };
-  }, []);
+  }, [isEnabled]);
+}
+
+interface UseChannelIOVisibilityOptions {
+  disabledPaths?: RegExp[];
+}
+
+export function useChannelIOVisibility({ disabledPaths = [] }: UseChannelIOVisibilityOptions = {}) {
+  const isEnabled = isChannelIOEnabled();
+  const location = useLocation();
 
   useEffect(() => {
-    if (!isChannelIOEnabled || !pluginKey || typeof window === 'undefined') return;
+    if (!isEnabled) return;
 
-    const shouldHide = disabledPaths.some(path => path.test(window.location.pathname));
+    const shouldHide = disabledPaths.some(path => path.test(location.pathname));
 
     if (shouldHide) {
       ChannelService.hideChannelButton();
     } else {
       ChannelService.showChannelButton();
     }
-  }, [disabledPaths]);
-
-  return {
-    show: () => ChannelService.showChannelButton(),
-    hide: () => ChannelService.hideChannelButton(),
-  };
+  }, [disabledPaths, location.pathname, isEnabled]);
 }
