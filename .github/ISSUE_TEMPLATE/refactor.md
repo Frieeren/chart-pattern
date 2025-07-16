@@ -3,7 +3,6 @@ name: Refactor
 about: 리팩토링 이슈입니다.
 title: '♻️ [Refactor]'
 labels: enhancement
-assignees: ''
 
 ---
 

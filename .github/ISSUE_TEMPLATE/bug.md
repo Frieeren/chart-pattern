@@ -3,7 +3,6 @@ name: Bug
 about: 버그 발생 이슈입니다.
 title: "🐞 [Bug]"
 labels: bug
-assignees: ''
 
 ---
 

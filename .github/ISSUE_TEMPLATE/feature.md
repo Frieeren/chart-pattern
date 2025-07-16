@@ -3,7 +3,6 @@ name: Feature
 about: 기능 추가 이슈입니다.
 title: '✨ [Feature]'
 labels: enhancement
-assignees: ''
 
 ---
 
