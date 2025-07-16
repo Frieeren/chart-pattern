@@ -9,11 +9,17 @@ export const useGA4Init = () => {
   const initRef = useRef(false);
 
   useEffect(() => {
-    if (!isLocalhost && !initRef.current) {
-      initRef.current = true;
-      ReactGA.initialize(import.meta.env.VITE_GOOGLE_ANALYTICS_TRAKING_ID);
-      console.log('GA4 initialized');
+    if (isLocalhost || initRef.current) {
+      return;
     }
+
+    initRef.current = true;
+    ReactGA.initialize(import.meta.env.VITE_GOOGLE_ANALYTICS_TRAKING_ID);
+    console.log('GA4 initialized');
+
+    return () => {
+      initRef.current = true;
+    };
   }, []);
 };
 

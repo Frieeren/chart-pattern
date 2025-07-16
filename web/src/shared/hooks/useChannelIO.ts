@@ -29,6 +29,7 @@ export function useChannelIO({ disabledPaths = [] }: UseChannelIOOptions = {}) {
     });
 
     return () => {
+      initRef.current = false;
       ChannelService.shutdown();
     };
   }, []);
