@@ -1,6 +1,5 @@
 import * as ChannelService from '@channel.io/channel-web-sdk-loader';
-import { useEffect } from 'react';
-import { useLocation } from 'react-router';
+import { useEffect, useRef } from 'react';
 
 interface UseChannelIOOptions {
   disabledPaths?: RegExp[];
@@ -9,16 +8,17 @@ interface UseChannelIOOptions {
 export function useChannelIO({ disabledPaths = [] }: UseChannelIOOptions = {}) {
   const isChannelIOEnabled = import.meta.env.VITE_FEATURE_CHANNELIO === 'true';
   const pluginKey = import.meta.env.VITE_CHANNELIO_PLUGIN_KEY;
-  const { pathname } = useLocation();
+  const initRef = useRef(false);
 
   useEffect(() => {
-    if (!isChannelIOEnabled || !pluginKey) {
+    if (!isChannelIOEnabled || !pluginKey || initRef.current) {
       if (import.meta.env.DEV) {
         console.warn('ChannelIO configuration missing');
       }
       return;
     }
 
+    initRef.current = true;
     ChannelService.loadScript();
     ChannelService.boot({
       pluginKey,
@@ -30,16 +30,16 @@ export function useChannelIO({ disabledPaths = [] }: UseChannelIOOptions = {}) {
   }, []);
 
   useEffect(() => {
-    if (!isChannelIOEnabled || !pluginKey) return;
+    if (!isChannelIOEnabled || !pluginKey || typeof window === 'undefined') return;
 
-    const shouldHide = disabledPaths.some(path => path.test(pathname));
+    const shouldHide = disabledPaths.some(path => path.test(window.location.pathname));
 
     if (shouldHide) {
       ChannelService.hideChannelButton();
     } else {
       ChannelService.showChannelButton();
     }
-  }, [pathname, disabledPaths]);
+  }, [disabledPaths]);
 
   return {
     show: () => ChannelService.showChannelButton(),
