@@ -11,10 +11,14 @@ export function useChannelIO({ disabledPaths = [] }: UseChannelIOOptions = {}) {
   const initRef = useRef(false);
 
   useEffect(() => {
-    if (!isChannelIOEnabled || !pluginKey || initRef.current) {
+    if (!isChannelIOEnabled || !pluginKey) {
       if (import.meta.env.DEV) {
         console.warn('ChannelIO configuration missing');
       }
+      return;
+    }
+
+    if (initRef.current) {
       return;
     }
 
