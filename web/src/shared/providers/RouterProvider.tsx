@@ -1,13 +1,11 @@
 import { Suspense, lazy } from 'react';
 import { Outlet, RouterProvider, createBrowserRouter } from 'react-router';
-import { useChannelIO } from '../hooks/useChannelIO';
 import { useGARouteTracking } from '../hooks/useGA';
 
 const MainPage = lazy(() => import('@web/pages/main/MainPage'));
 
 const RootLayout = () => {
   useGARouteTracking();
-  useChannelIO();
 
   return <Outlet />;
 };
