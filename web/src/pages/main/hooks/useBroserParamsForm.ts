@@ -27,7 +27,8 @@ export function useBrowserParamsForm<TFieldValues extends FieldValues = FieldVal
 
   const initialValues = useMemo(() => {
     const parsedParams = paramsToFields(params);
-    const values = Object.values(parsedParams).every(value => value === null) ? defaultValues : parsedParams;
+    const isValidParams = Object.values(parsedParams).every(value => value !== null);
+    const values = isValidParams ? parsedParams : defaultValues;
     return values as DefaultValues<TFieldValues>;
   }, [params, paramsToFields, defaultValues]);
 
