@@ -24,3 +24,9 @@ export const filterOptionSchema = z.object({
   label: z.string(), // 표시 레이블
 });
 export type FilterOption = z.infer<typeof filterOptionSchema>;
+
+export const filterFormSchema = z.object({
+  interval: intervalSchema,
+  symbol: symbolSchema.shape.id,
+});
+export type FilterFormFields = z.infer<typeof filterFormSchema>;
