@@ -33,6 +33,8 @@ jobs:
 
       - name: Generate OpenAPI Schema
         working-directory: api
+        env:
+          APP_ENV: test
         run: |
           uv run python -c "
           import json
