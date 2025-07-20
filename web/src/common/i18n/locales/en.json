@@ -3,8 +3,7 @@
     "title": "Filtering",
     "interval": "Interval",
     "symbol": "Symbol",
-    "selectSymbol": "Select Symbol",
-    "noSymbol": "No available symbols"
+    "empty": "Select"
   },
   "chartList": {
     "noChart": "No charts"

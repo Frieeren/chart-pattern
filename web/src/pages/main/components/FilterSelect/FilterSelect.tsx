@@ -1,4 +1,5 @@
 import { forwardRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { errorMessage, filterItem, filterLabel, filterSelect } from './style.css';
 
 interface FilterSelectProps {
@@ -12,6 +13,8 @@ interface FilterSelectProps {
 
 export const FilterSelect = forwardRef<HTMLSelectElement, FilterSelectProps>(
   ({ label, options, name, onChange, onBlur, error }, ref) => {
+    const { t } = useTranslation();
+
     return (
       <div className={filterItem}>
         <label htmlFor={`${label}-select`} className={filterLabel}>
@@ -25,13 +28,12 @@ export const FilterSelect = forwardRef<HTMLSelectElement, FilterSelectProps>(
           onBlur={onBlur}
           ref={ref}
         >
-          {[
-            ...[{ value: '', label: 'Select' }, ...(options ?? [])].map(option => (
-              <option key={option.value} value={option.value.toString()}>
-                {option.label}
-              </option>
-            )),
-          ]}
+          <option value="">{t('filter.empty')}</option>
+          {options?.map(option => (
+            <option key={option.value} value={option.value.toString()}>
+              {option.label}
+            </option>
+          ))}
         </select>
         {error && <div className={errorMessage}>{error}</div>}
       </div>

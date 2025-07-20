@@ -7,6 +7,7 @@ import { INTERVAL_OPTIONS } from '@web/shared/constants/filter';
 import { type SymbolOption, filterFormSchema, intervalSchema } from '@web/shared/types/domain';
 import { useMemo } from 'react';
 import type { Resolver } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { ChartListView } from './components/ChartListView';
 import { ChartView } from './components/ChartView';
 import { FilterSelect } from './components/FilterSelect';
@@ -15,6 +16,7 @@ import { chartArea, container, filterArea, listArea } from './style.css';
 import { type FilterFormFields, fieldsToParamsTransformer, paramsToFieldsTransformer } from './utils/transformer';
 
 export function MainPage() {
+  const { t } = useTranslation();
   const { data } = useSymbols();
 
   const symbols: SymbolOption[] = useMemo(() => {
@@ -58,14 +60,14 @@ export function MainPage() {
 
       <div className={filterArea}>
         <FilterSelect
-          label="Interval"
+          label={t('filter.interval')}
           options={INTERVAL_OPTIONS}
           error={errors.interval?.message}
           {...register('interval')}
         />
 
         <FilterSelect
-          label="Symbol"
+          label={t('filter.symbol')}
           options={symbols?.map(s => ({ value: s.id, label: `${s.name} (${s.code})` }))}
           error={errors.symbol?.message}
           {...register('symbol')}
