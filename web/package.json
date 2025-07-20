@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@channel.io/channel-web-sdk-loader": "^2.0.0",
+    "@hookform/resolvers": "^5.1.1",
     "@orval/core": "^7.9.0",
     "@sentry/react": "^9.27.0",
     "@sentry/vite-plugin": "^3.5.0",
@@ -34,10 +35,11 @@
     "react-apexcharts": "^1.7.0",
     "react-dom": "^19.0.0",
     "react-ga4": "^2.1.0",
+    "react-hook-form": "^7.60.0",
     "react-i18next": "^15.5.1",
     "react-router": "^7.5.2",
     "react-ts-tradingview-widgets": "^1.2.8",
-    "zod": "^3.24.3",
+    "zod": "^4.0.5",
     "zustand": "^5.0.3"
   },
   "devDependencies": {
