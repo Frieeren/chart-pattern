@@ -26,7 +26,7 @@ export const filterOptionSchema = z.object({
 export type FilterOption = z.infer<typeof filterOptionSchema>;
 
 export const filterFormSchema = z.object({
-  interval: intervalSchema,
-  symbol: symbolSchema.shape.id,
+  interval: intervalSchema.nullable(),
+  symbol: symbolSchema.shape.id.nullable(),
 });
 export type FilterFormFields = z.infer<typeof filterFormSchema>;
