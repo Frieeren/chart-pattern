@@ -21,7 +21,7 @@ export function useBrowserParamsForm<TFieldValues extends FieldValues = FieldVal
 ): UseFormReturn<TFieldValues> & {
   reset: () => void;
 } {
-  const { paramsToFields, fieldsToParams, defaultValues, mode = 'onChange', ...useFormOptions } = options;
+  const { paramsToFields, fieldsToParams, defaultValues, ...useFormOptions } = options;
 
   const { params, updateParams } = useBrowseParams();
 
@@ -34,6 +34,7 @@ export function useBrowserParamsForm<TFieldValues extends FieldValues = FieldVal
 
   const form = useForm<TFieldValues>({
     defaultValues: initialValues,
+    mode: 'onChange',
     ...useFormOptions,
   });
 
