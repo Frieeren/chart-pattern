@@ -1,10 +1,12 @@
 name: OpenAPI Generator
 
 on:
+  workflow_dispatch:
   pull_request:
     types: [opened, synchronize]
     paths:
       - "api/**"
+      - "web/src/shared/api/http.ts"
     branches:
       - main
 
@@ -32,6 +34,8 @@ jobs:
 
       - name: Generate OpenAPI Schema
         working-directory: api
+        env:
+          APP_ENV: test
         run: |
           uv run python -c "
           import json
@@ -56,11 +60,12 @@ jobs:
       - name: ⚙️ Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version-file: ".node-version"
+          node-version-file: "web/.nvmrc"
           cache: "pnpm"
-          cache-dependency-path: "pnpm-lock.yaml"
+          cache-dependency-path: "web/pnpm-lock.yaml"
 
       - name: Install Dependencies
+        working-directory: web
         run: pnpm install --frozen-lockfile
 
       - name: Generate API using Orval

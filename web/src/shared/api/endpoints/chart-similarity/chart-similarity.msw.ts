@@ -15,15 +15,19 @@ export const getChartSimilarityLatestResponseMock = (
   overrideResponse: Partial<ChartSimilarityList> = {}
 ): ChartSimilarityList => ({
   similarities: Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
+    symbol: faker.string.alpha(20),
+    time: `${faker.date.past().toISOString().split('.')[0]}Z`,
+    start_time: `${faker.date.past().toISOString().split('.')[0]}Z`,
     end_time: `${faker.date.past().toISOString().split('.')[0]}Z`,
+    similarity: faker.number.int({ min: undefined, max: undefined }),
     price_data: faker.helpers.arrayElement([
       faker.helpers.arrayElement([
         Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
-          close: faker.number.int({ min: undefined, max: undefined }),
+          time: `${faker.date.past().toISOString().split('.')[0]}Z`,
+          open: faker.number.int({ min: undefined, max: undefined }),
           high: faker.number.int({ min: undefined, max: undefined }),
           low: faker.number.int({ min: undefined, max: undefined }),
-          open: faker.number.int({ min: undefined, max: undefined }),
-          time: `${faker.date.past().toISOString().split('.')[0]}Z`,
+          close: faker.number.int({ min: undefined, max: undefined }),
           volume: faker.helpers.arrayElement([
             faker.helpers.arrayElement([faker.number.int({ min: undefined, max: undefined }), null]),
             undefined,
@@ -33,10 +37,6 @@ export const getChartSimilarityLatestResponseMock = (
       ]),
       undefined,
     ]),
-    similarity: faker.number.int({ min: undefined, max: undefined }),
-    start_time: `${faker.date.past().toISOString().split('.')[0]}Z`,
-    symbol: faker.string.alpha(20),
-    time: `${faker.date.past().toISOString().split('.')[0]}Z`,
   })),
   ...overrideResponse,
 });

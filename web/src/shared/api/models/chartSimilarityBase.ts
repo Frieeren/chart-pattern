@@ -8,11 +8,11 @@
 import type { ChartSimilarityBasePriceData } from './chartSimilarityBasePriceData';
 
 export interface ChartSimilarityBase {
-  end_time: string;
-  price_data?: ChartSimilarityBasePriceData;
-  similarity: number;
-  start_time: string;
   /** 심볼 (예: BTCUSDT, ETHUSDT 등) */
   symbol: string;
   time: string;
+  start_time: string;
+  end_time: string;
+  similarity: number;
+  price_data?: ChartSimilarityBasePriceData;
 }
