@@ -59,13 +59,13 @@ jobs:
 
       - name: ⚙️ Setup Node.js
         uses: actions/setup-node@v4
-        working-directory: web
         with:
-          node-version-file: ".nvmrc"
+          node-version-file: "web/.nvmrc"
           cache: "pnpm"
-          cache-dependency-path: "pnpm-lock.yaml"
+          cache-dependency-path: "web/pnpm-lock.yaml"
 
       - name: Install Dependencies
+        working-directory: web
         run: pnpm install --frozen-lockfile
 
       - name: Generate API using Orval
