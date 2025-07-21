@@ -60,3 +60,6 @@ export const httpClient = <T>(axiosConfig: AxiosRequestConfig): Promise<T> => {
 
   return promise;
 };
+
+/** https://orval.dev/reference/configuration/output#mutator */
+export type ErrorType<Error> = AxiosError<Error>;
