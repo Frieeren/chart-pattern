@@ -25,6 +25,7 @@ import type {
 } from '@tanstack/react-query';
 
 import { httpClient } from '../../http';
+import type { ErrorType } from '../../http';
 
 /**
  * API 서버의 상태를 확인하는 엔드포인트
@@ -40,7 +41,7 @@ export const getHealthCheckQueryKey = () => {
 
 export const getHealthCheckInfiniteQueryOptions = <
   TData = InfiniteData<Awaited<ReturnType<typeof healthCheck>>>,
-  TError = unknown,
+  TError = ErrorType<unknown>,
 >(options?: { query?: Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof healthCheck>>, TError, TData>> }) => {
   const { query: queryOptions } = options ?? {};
 
@@ -56,9 +57,12 @@ export const getHealthCheckInfiniteQueryOptions = <
 };
 
 export type HealthCheckInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof healthCheck>>>;
-export type HealthCheckInfiniteQueryError = unknown;
+export type HealthCheckInfiniteQueryError = ErrorType<unknown>;
 
-export function useHealthCheckInfinite<TData = InfiniteData<Awaited<ReturnType<typeof healthCheck>>>, TError = unknown>(
+export function useHealthCheckInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof healthCheck>>>,
+  TError = ErrorType<unknown>,
+>(
   options: {
     query: Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof healthCheck>>, TError, TData>> &
       Pick<
@@ -72,7 +76,10 @@ export function useHealthCheckInfinite<TData = InfiniteData<Awaited<ReturnType<t
   },
   queryClient?: QueryClient
 ): DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useHealthCheckInfinite<TData = InfiniteData<Awaited<ReturnType<typeof healthCheck>>>, TError = unknown>(
+export function useHealthCheckInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof healthCheck>>>,
+  TError = ErrorType<unknown>,
+>(
   options?: {
     query?: Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof healthCheck>>, TError, TData>> &
       Pick<
@@ -86,7 +93,10 @@ export function useHealthCheckInfinite<TData = InfiniteData<Awaited<ReturnType<t
   },
   queryClient?: QueryClient
 ): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useHealthCheckInfinite<TData = InfiniteData<Awaited<ReturnType<typeof healthCheck>>>, TError = unknown>(
+export function useHealthCheckInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof healthCheck>>>,
+  TError = ErrorType<unknown>,
+>(
   options?: { query?: Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof healthCheck>>, TError, TData>> },
   queryClient?: QueryClient
 ): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -94,7 +104,10 @@ export function useHealthCheckInfinite<TData = InfiniteData<Awaited<ReturnType<t
  * @summary API 서버 상태 확인
  */
 
-export function useHealthCheckInfinite<TData = InfiniteData<Awaited<ReturnType<typeof healthCheck>>>, TError = unknown>(
+export function useHealthCheckInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof healthCheck>>>,
+  TError = ErrorType<unknown>,
+>(
   options?: { query?: Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof healthCheck>>, TError, TData>> },
   queryClient?: QueryClient
 ): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -111,7 +124,7 @@ export function useHealthCheckInfinite<TData = InfiniteData<Awaited<ReturnType<t
 
 export const getHealthCheckQueryOptions = <
   TData = Awaited<ReturnType<typeof healthCheck>>,
-  TError = unknown,
+  TError = ErrorType<unknown>,
 >(options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof healthCheck>>, TError, TData>> }) => {
   const { query: queryOptions } = options ?? {};
 
@@ -127,9 +140,9 @@ export const getHealthCheckQueryOptions = <
 };
 
 export type HealthCheckQueryResult = NonNullable<Awaited<ReturnType<typeof healthCheck>>>;
-export type HealthCheckQueryError = unknown;
+export type HealthCheckQueryError = ErrorType<unknown>;
 
-export function useHealthCheck<TData = Awaited<ReturnType<typeof healthCheck>>, TError = unknown>(
+export function useHealthCheck<TData = Awaited<ReturnType<typeof healthCheck>>, TError = ErrorType<unknown>>(
   options: {
     query: Partial<UseQueryOptions<Awaited<ReturnType<typeof healthCheck>>, TError, TData>> &
       Pick<
@@ -143,7 +156,7 @@ export function useHealthCheck<TData = Awaited<ReturnType<typeof healthCheck>>, 
   },
   queryClient?: QueryClient
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useHealthCheck<TData = Awaited<ReturnType<typeof healthCheck>>, TError = unknown>(
+export function useHealthCheck<TData = Awaited<ReturnType<typeof healthCheck>>, TError = ErrorType<unknown>>(
   options?: {
     query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof healthCheck>>, TError, TData>> &
       Pick<
@@ -157,7 +170,7 @@ export function useHealthCheck<TData = Awaited<ReturnType<typeof healthCheck>>, 
   },
   queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useHealthCheck<TData = Awaited<ReturnType<typeof healthCheck>>, TError = unknown>(
+export function useHealthCheck<TData = Awaited<ReturnType<typeof healthCheck>>, TError = ErrorType<unknown>>(
   options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof healthCheck>>, TError, TData>> },
   queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -165,7 +178,7 @@ export function useHealthCheck<TData = Awaited<ReturnType<typeof healthCheck>>, 
  * @summary API 서버 상태 확인
  */
 
-export function useHealthCheck<TData = Awaited<ReturnType<typeof healthCheck>>, TError = unknown>(
+export function useHealthCheck<TData = Awaited<ReturnType<typeof healthCheck>>, TError = ErrorType<unknown>>(
   options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof healthCheck>>, TError, TData>> },
   queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -182,7 +195,7 @@ export function useHealthCheck<TData = Awaited<ReturnType<typeof healthCheck>>, 
 
 export const getHealthCheckSuspenseQueryOptions = <
   TData = Awaited<ReturnType<typeof healthCheck>>,
-  TError = unknown,
+  TError = ErrorType<unknown>,
 >(options?: { query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof healthCheck>>, TError, TData>> }) => {
   const { query: queryOptions } = options ?? {};
 
@@ -198,17 +211,17 @@ export const getHealthCheckSuspenseQueryOptions = <
 };
 
 export type HealthCheckSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof healthCheck>>>;
-export type HealthCheckSuspenseQueryError = unknown;
+export type HealthCheckSuspenseQueryError = ErrorType<unknown>;
 
-export function useHealthCheckSuspense<TData = Awaited<ReturnType<typeof healthCheck>>, TError = unknown>(
+export function useHealthCheckSuspense<TData = Awaited<ReturnType<typeof healthCheck>>, TError = ErrorType<unknown>>(
   options: { query: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof healthCheck>>, TError, TData>> },
   queryClient?: QueryClient
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useHealthCheckSuspense<TData = Awaited<ReturnType<typeof healthCheck>>, TError = unknown>(
+export function useHealthCheckSuspense<TData = Awaited<ReturnType<typeof healthCheck>>, TError = ErrorType<unknown>>(
   options?: { query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof healthCheck>>, TError, TData>> },
   queryClient?: QueryClient
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useHealthCheckSuspense<TData = Awaited<ReturnType<typeof healthCheck>>, TError = unknown>(
+export function useHealthCheckSuspense<TData = Awaited<ReturnType<typeof healthCheck>>, TError = ErrorType<unknown>>(
   options?: { query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof healthCheck>>, TError, TData>> },
   queryClient?: QueryClient
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -216,7 +229,7 @@ export function useHealthCheckSuspense<TData = Awaited<ReturnType<typeof healthC
  * @summary API 서버 상태 확인
  */
 
-export function useHealthCheckSuspense<TData = Awaited<ReturnType<typeof healthCheck>>, TError = unknown>(
+export function useHealthCheckSuspense<TData = Awaited<ReturnType<typeof healthCheck>>, TError = ErrorType<unknown>>(
   options?: { query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof healthCheck>>, TError, TData>> },
   queryClient?: QueryClient
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
