@@ -58,8 +58,9 @@ jobs:
 
       - name: ⚙️ Setup Node.js
         uses: actions/setup-node@v4
+        working-directory: web
         with:
-          node-version-file: ".node-version"
+          node-version-file: ".nvmrc"
           cache: "pnpm"
           cache-dependency-path: "pnpm-lock.yaml"
 
