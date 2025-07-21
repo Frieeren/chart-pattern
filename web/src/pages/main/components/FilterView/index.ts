@@ -1,1 +1,0 @@
-export { FilterView } from './FilterView';
