@@ -19,24 +19,24 @@ export const chartSimilarityLatestResponse = zod.object({
   similarities: zod
     .array(
       zod.object({
+        symbol: zod.string().describe('심볼 (예: BTCUSDT, ETHUSDT 등)'),
+        time: zod.string().datetime({}),
+        start_time: zod.string().datetime({}),
         end_time: zod.string().datetime({}),
+        similarity: zod.number(),
         price_data: zod
           .array(
             zod.object({
-              close: zod.number(),
+              time: zod.string().datetime({}),
+              open: zod.number(),
               high: zod.number(),
               low: zod.number(),
-              open: zod.number(),
-              time: zod.string().datetime({}),
+              close: zod.number(),
               volume: zod.number().or(zod.null()).optional(),
             })
           )
           .or(zod.null())
           .optional(),
-        similarity: zod.number(),
-        start_time: zod.string().datetime({}),
-        symbol: zod.string().describe('심볼 (예: BTCUSDT, ETHUSDT 등)'),
-        time: zod.string().datetime({}),
       })
     )
     .describe('차트 유사도 결과 리스트'),

@@ -27,7 +27,6 @@ import type {
 import type { ChartSimilarityList, HTTPValidationError } from '../../models';
 
 import { httpClient } from '../../http';
-import type { ErrorType } from '../../http';
 
 /**
  * 심볼별 최신 차트 유사도 결과 리스트를 반환합니다.
@@ -43,7 +42,7 @@ export const getChartSimilarityLatestQueryKey = (symbol: string) => {
 
 export const getChartSimilarityLatestInfiniteQueryOptions = <
   TData = InfiniteData<Awaited<ReturnType<typeof chartSimilarityLatest>>>,
-  TError = ErrorType<HTTPValidationError>,
+  TError = HTTPValidationError,
 >(
   symbol: string,
   options?: {
@@ -65,11 +64,11 @@ export const getChartSimilarityLatestInfiniteQueryOptions = <
 };
 
 export type ChartSimilarityLatestInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof chartSimilarityLatest>>>;
-export type ChartSimilarityLatestInfiniteQueryError = ErrorType<HTTPValidationError>;
+export type ChartSimilarityLatestInfiniteQueryError = HTTPValidationError;
 
 export function useChartSimilarityLatestInfinite<
   TData = InfiniteData<Awaited<ReturnType<typeof chartSimilarityLatest>>>,
-  TError = ErrorType<HTTPValidationError>,
+  TError = HTTPValidationError,
 >(
   symbol: string,
   options: {
@@ -87,7 +86,7 @@ export function useChartSimilarityLatestInfinite<
 ): DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useChartSimilarityLatestInfinite<
   TData = InfiniteData<Awaited<ReturnType<typeof chartSimilarityLatest>>>,
-  TError = ErrorType<HTTPValidationError>,
+  TError = HTTPValidationError,
 >(
   symbol: string,
   options?: {
@@ -105,7 +104,7 @@ export function useChartSimilarityLatestInfinite<
 ): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useChartSimilarityLatestInfinite<
   TData = InfiniteData<Awaited<ReturnType<typeof chartSimilarityLatest>>>,
-  TError = ErrorType<HTTPValidationError>,
+  TError = HTTPValidationError,
 >(
   symbol: string,
   options?: {
@@ -119,7 +118,7 @@ export function useChartSimilarityLatestInfinite<
 
 export function useChartSimilarityLatestInfinite<
   TData = InfiniteData<Awaited<ReturnType<typeof chartSimilarityLatest>>>,
-  TError = ErrorType<HTTPValidationError>,
+  TError = HTTPValidationError,
 >(
   symbol: string,
   options?: {
@@ -140,7 +139,7 @@ export function useChartSimilarityLatestInfinite<
 
 export const getChartSimilarityLatestQueryOptions = <
   TData = Awaited<ReturnType<typeof chartSimilarityLatest>>,
-  TError = ErrorType<HTTPValidationError>,
+  TError = HTTPValidationError,
 >(
   symbol: string,
   options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof chartSimilarityLatest>>, TError, TData>> }
@@ -160,11 +159,11 @@ export const getChartSimilarityLatestQueryOptions = <
 };
 
 export type ChartSimilarityLatestQueryResult = NonNullable<Awaited<ReturnType<typeof chartSimilarityLatest>>>;
-export type ChartSimilarityLatestQueryError = ErrorType<HTTPValidationError>;
+export type ChartSimilarityLatestQueryError = HTTPValidationError;
 
 export function useChartSimilarityLatest<
   TData = Awaited<ReturnType<typeof chartSimilarityLatest>>,
-  TError = ErrorType<HTTPValidationError>,
+  TError = HTTPValidationError,
 >(
   symbol: string,
   options: {
@@ -182,7 +181,7 @@ export function useChartSimilarityLatest<
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useChartSimilarityLatest<
   TData = Awaited<ReturnType<typeof chartSimilarityLatest>>,
-  TError = ErrorType<HTTPValidationError>,
+  TError = HTTPValidationError,
 >(
   symbol: string,
   options?: {
@@ -200,7 +199,7 @@ export function useChartSimilarityLatest<
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useChartSimilarityLatest<
   TData = Awaited<ReturnType<typeof chartSimilarityLatest>>,
-  TError = ErrorType<HTTPValidationError>,
+  TError = HTTPValidationError,
 >(
   symbol: string,
   options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof chartSimilarityLatest>>, TError, TData>> },
@@ -212,7 +211,7 @@ export function useChartSimilarityLatest<
 
 export function useChartSimilarityLatest<
   TData = Awaited<ReturnType<typeof chartSimilarityLatest>>,
-  TError = ErrorType<HTTPValidationError>,
+  TError = HTTPValidationError,
 >(
   symbol: string,
   options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof chartSimilarityLatest>>, TError, TData>> },
@@ -231,7 +230,7 @@ export function useChartSimilarityLatest<
 
 export const getChartSimilarityLatestSuspenseQueryOptions = <
   TData = Awaited<ReturnType<typeof chartSimilarityLatest>>,
-  TError = ErrorType<HTTPValidationError>,
+  TError = HTTPValidationError,
 >(
   symbol: string,
   options?: {
@@ -253,11 +252,11 @@ export const getChartSimilarityLatestSuspenseQueryOptions = <
 };
 
 export type ChartSimilarityLatestSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof chartSimilarityLatest>>>;
-export type ChartSimilarityLatestSuspenseQueryError = ErrorType<HTTPValidationError>;
+export type ChartSimilarityLatestSuspenseQueryError = HTTPValidationError;
 
 export function useChartSimilarityLatestSuspense<
   TData = Awaited<ReturnType<typeof chartSimilarityLatest>>,
-  TError = ErrorType<HTTPValidationError>,
+  TError = HTTPValidationError,
 >(
   symbol: string,
   options: {
@@ -267,7 +266,7 @@ export function useChartSimilarityLatestSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useChartSimilarityLatestSuspense<
   TData = Awaited<ReturnType<typeof chartSimilarityLatest>>,
-  TError = ErrorType<HTTPValidationError>,
+  TError = HTTPValidationError,
 >(
   symbol: string,
   options?: {
@@ -277,7 +276,7 @@ export function useChartSimilarityLatestSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useChartSimilarityLatestSuspense<
   TData = Awaited<ReturnType<typeof chartSimilarityLatest>>,
-  TError = ErrorType<HTTPValidationError>,
+  TError = HTTPValidationError,
 >(
   symbol: string,
   options?: {
@@ -291,7 +290,7 @@ export function useChartSimilarityLatestSuspense<
 
 export function useChartSimilarityLatestSuspense<
   TData = Awaited<ReturnType<typeof chartSimilarityLatest>>,
-  TError = ErrorType<HTTPValidationError>,
+  TError = HTTPValidationError,
 >(
   symbol: string,
   options?: {

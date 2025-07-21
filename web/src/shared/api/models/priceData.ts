@@ -8,10 +8,10 @@
 import type { PriceDataVolume } from './priceDataVolume';
 
 export interface PriceData {
-  close: number;
+  time: string;
+  open: number;
   high: number;
   low: number;
-  open: number;
-  time: string;
+  close: number;
   volume?: PriceDataVolume;
 }

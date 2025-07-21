@@ -27,7 +27,6 @@ import type {
 import type { Symbols } from '../../models';
 
 import { httpClient } from '../../http';
-import type { ErrorType } from '../../http';
 
 /**
  * 종목 코드 리스트를 반환합니다.
@@ -43,7 +42,7 @@ export const getSymbolsQueryKey = () => {
 
 export const getSymbolsInfiniteQueryOptions = <
   TData = InfiniteData<Awaited<ReturnType<typeof symbols>>>,
-  TError = ErrorType<unknown>,
+  TError = unknown,
 >(options?: { query?: Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof symbols>>, TError, TData>> }) => {
   const { query: queryOptions } = options ?? {};
 
@@ -59,12 +58,9 @@ export const getSymbolsInfiniteQueryOptions = <
 };
 
 export type SymbolsInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof symbols>>>;
-export type SymbolsInfiniteQueryError = ErrorType<unknown>;
+export type SymbolsInfiniteQueryError = unknown;
 
-export function useSymbolsInfinite<
-  TData = InfiniteData<Awaited<ReturnType<typeof symbols>>>,
-  TError = ErrorType<unknown>,
->(
+export function useSymbolsInfinite<TData = InfiniteData<Awaited<ReturnType<typeof symbols>>>, TError = unknown>(
   options: {
     query: Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof symbols>>, TError, TData>> &
       Pick<
@@ -74,10 +70,7 @@ export function useSymbolsInfinite<
   },
   queryClient?: QueryClient
 ): DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useSymbolsInfinite<
-  TData = InfiniteData<Awaited<ReturnType<typeof symbols>>>,
-  TError = ErrorType<unknown>,
->(
+export function useSymbolsInfinite<TData = InfiniteData<Awaited<ReturnType<typeof symbols>>>, TError = unknown>(
   options?: {
     query?: Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof symbols>>, TError, TData>> &
       Pick<
@@ -87,10 +80,7 @@ export function useSymbolsInfinite<
   },
   queryClient?: QueryClient
 ): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useSymbolsInfinite<
-  TData = InfiniteData<Awaited<ReturnType<typeof symbols>>>,
-  TError = ErrorType<unknown>,
->(
+export function useSymbolsInfinite<TData = InfiniteData<Awaited<ReturnType<typeof symbols>>>, TError = unknown>(
   options?: { query?: Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof symbols>>, TError, TData>> },
   queryClient?: QueryClient
 ): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -98,10 +88,7 @@ export function useSymbolsInfinite<
  * @summary 종목 코드 리스트 조회
  */
 
-export function useSymbolsInfinite<
-  TData = InfiniteData<Awaited<ReturnType<typeof symbols>>>,
-  TError = ErrorType<unknown>,
->(
+export function useSymbolsInfinite<TData = InfiniteData<Awaited<ReturnType<typeof symbols>>>, TError = unknown>(
   options?: { query?: Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof symbols>>, TError, TData>> },
   queryClient?: QueryClient
 ): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -116,10 +103,9 @@ export function useSymbolsInfinite<
   return query;
 }
 
-export const getSymbolsQueryOptions = <
-  TData = Awaited<ReturnType<typeof symbols>>,
-  TError = ErrorType<unknown>,
->(options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof symbols>>, TError, TData>> }) => {
+export const getSymbolsQueryOptions = <TData = Awaited<ReturnType<typeof symbols>>, TError = unknown>(options?: {
+  query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof symbols>>, TError, TData>>;
+}) => {
   const { query: queryOptions } = options ?? {};
 
   const queryKey = queryOptions?.queryKey ?? getSymbolsQueryKey();
@@ -134,9 +120,9 @@ export const getSymbolsQueryOptions = <
 };
 
 export type SymbolsQueryResult = NonNullable<Awaited<ReturnType<typeof symbols>>>;
-export type SymbolsQueryError = ErrorType<unknown>;
+export type SymbolsQueryError = unknown;
 
-export function useSymbols<TData = Awaited<ReturnType<typeof symbols>>, TError = ErrorType<unknown>>(
+export function useSymbols<TData = Awaited<ReturnType<typeof symbols>>, TError = unknown>(
   options: {
     query: Partial<UseQueryOptions<Awaited<ReturnType<typeof symbols>>, TError, TData>> &
       Pick<
@@ -146,7 +132,7 @@ export function useSymbols<TData = Awaited<ReturnType<typeof symbols>>, TError =
   },
   queryClient?: QueryClient
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useSymbols<TData = Awaited<ReturnType<typeof symbols>>, TError = ErrorType<unknown>>(
+export function useSymbols<TData = Awaited<ReturnType<typeof symbols>>, TError = unknown>(
   options?: {
     query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof symbols>>, TError, TData>> &
       Pick<
@@ -156,7 +142,7 @@ export function useSymbols<TData = Awaited<ReturnType<typeof symbols>>, TError =
   },
   queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useSymbols<TData = Awaited<ReturnType<typeof symbols>>, TError = ErrorType<unknown>>(
+export function useSymbols<TData = Awaited<ReturnType<typeof symbols>>, TError = unknown>(
   options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof symbols>>, TError, TData>> },
   queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -164,7 +150,7 @@ export function useSymbols<TData = Awaited<ReturnType<typeof symbols>>, TError =
  * @summary 종목 코드 리스트 조회
  */
 
-export function useSymbols<TData = Awaited<ReturnType<typeof symbols>>, TError = ErrorType<unknown>>(
+export function useSymbols<TData = Awaited<ReturnType<typeof symbols>>, TError = unknown>(
   options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof symbols>>, TError, TData>> },
   queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -181,7 +167,7 @@ export function useSymbols<TData = Awaited<ReturnType<typeof symbols>>, TError =
 
 export const getSymbolsSuspenseQueryOptions = <
   TData = Awaited<ReturnType<typeof symbols>>,
-  TError = ErrorType<unknown>,
+  TError = unknown,
 >(options?: { query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof symbols>>, TError, TData>> }) => {
   const { query: queryOptions } = options ?? {};
 
@@ -197,17 +183,17 @@ export const getSymbolsSuspenseQueryOptions = <
 };
 
 export type SymbolsSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof symbols>>>;
-export type SymbolsSuspenseQueryError = ErrorType<unknown>;
+export type SymbolsSuspenseQueryError = unknown;
 
-export function useSymbolsSuspense<TData = Awaited<ReturnType<typeof symbols>>, TError = ErrorType<unknown>>(
+export function useSymbolsSuspense<TData = Awaited<ReturnType<typeof symbols>>, TError = unknown>(
   options: { query: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof symbols>>, TError, TData>> },
   queryClient?: QueryClient
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useSymbolsSuspense<TData = Awaited<ReturnType<typeof symbols>>, TError = ErrorType<unknown>>(
+export function useSymbolsSuspense<TData = Awaited<ReturnType<typeof symbols>>, TError = unknown>(
   options?: { query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof symbols>>, TError, TData>> },
   queryClient?: QueryClient
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useSymbolsSuspense<TData = Awaited<ReturnType<typeof symbols>>, TError = ErrorType<unknown>>(
+export function useSymbolsSuspense<TData = Awaited<ReturnType<typeof symbols>>, TError = unknown>(
   options?: { query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof symbols>>, TError, TData>> },
   queryClient?: QueryClient
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -215,7 +201,7 @@ export function useSymbolsSuspense<TData = Awaited<ReturnType<typeof symbols>>, 
  * @summary 종목 코드 리스트 조회
  */
 
-export function useSymbolsSuspense<TData = Awaited<ReturnType<typeof symbols>>, TError = ErrorType<unknown>>(
+export function useSymbolsSuspense<TData = Awaited<ReturnType<typeof symbols>>, TError = unknown>(
   options?: { query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof symbols>>, TError, TData>> },
   queryClient?: QueryClient
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {

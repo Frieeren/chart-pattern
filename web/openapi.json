@@ -1,12 +1,128 @@
 {
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Chart Pattern API",
+    "description": "차트 패턴 매칭을 위한 API 서버",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "Health Check"
+        ],
+        "summary": "API 서버 상태 확인",
+        "description": "API 서버의 상태를 확인하는 엔드포인트",
+        "operationId": "health_check",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/symbols": {
+      "get": {
+        "tags": [
+          "Symbols",
+          "Symbols"
+        ],
+        "summary": "종목 코드 리스트 조회",
+        "description": "종목 코드 리스트를 반환합니다.",
+        "operationId": "symbols",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Symbols"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/chart-similarity/{symbol}": {
+      "get": {
+        "tags": [
+          "Chart Similarity",
+          "Chart Similarity"
+        ],
+        "summary": "차트 유사도 결과 조회",
+        "description": "심볼별 최신 차트 유사도 결과 리스트를 반환합니다.",
+        "operationId": "chart_similarity_latest",
+        "parameters": [
+          {
+            "name": "symbol",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "심볼 (예: BTCUSDT, ETHUSDT, ..)",
+              "title": "Symbol"
+            },
+            "description": "심볼 (예: BTCUSDT, ETHUSDT, ..)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChartSimilarityList"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   "components": {
     "schemas": {
       "ChartSimilarityBase": {
         "properties": {
-          "end_time": {
+          "symbol": {
+            "type": "string",
+            "title": "Symbol",
+            "description": "심볼 (예: BTCUSDT, ETHUSDT 등)"
+          },
+          "time": {
+            "type": "string",
             "format": "date-time",
-            "title": "End Time",
-            "type": "string"
+            "title": "Time"
+          },
+          "start_time": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Start Time"
+          },
+          "end_time": {
+            "type": "string",
+            "format": "date-time",
+            "title": "End Time"
+          },
+          "similarity": {
+            "type": "number",
+            "title": "Similarity"
           },
           "price_data": {
             "anyOf": [
@@ -21,27 +137,9 @@
               }
             ],
             "title": "Price Data"
-          },
-          "similarity": {
-            "title": "Similarity",
-            "type": "number"
-          },
-          "start_time": {
-            "format": "date-time",
-            "title": "Start Time",
-            "type": "string"
-          },
-          "symbol": {
-            "description": "심볼 (예: BTCUSDT, ETHUSDT 등)",
-            "title": "Symbol",
-            "type": "string"
-          },
-          "time": {
-            "format": "date-time",
-            "title": "Time",
-            "type": "string"
           }
         },
+        "type": "object",
         "required": [
           "symbol",
           "time",
@@ -49,10 +147,24 @@
           "end_time",
           "similarity"
         ],
-        "title": "ChartSimilarityBase",
-        "type": "object"
+        "title": "ChartSimilarityBase"
       },
       "ChartSimilarityList": {
+        "properties": {
+          "similarities": {
+            "items": {
+              "$ref": "#/components/schemas/ChartSimilarityBase"
+            },
+            "type": "array",
+            "title": "Similarities",
+            "description": "차트 유사도 결과 리스트"
+          }
+        },
+        "type": "object",
+        "required": [
+          "similarities"
+        ],
+        "title": "ChartSimilarityList",
         "example": {
           "similarities": [
             {
@@ -81,22 +193,7 @@
               "time": "2024-06-01T00:00:00"
             }
           ]
-        },
-        "properties": {
-          "similarities": {
-            "description": "차트 유사도 결과 리스트",
-            "items": {
-              "$ref": "#/components/schemas/ChartSimilarityBase"
-            },
-            "title": "Similarities",
-            "type": "array"
-          }
-        },
-        "required": [
-          "similarities"
-        ],
-        "title": "ChartSimilarityList",
-        "type": "object"
+        }
       },
       "HTTPValidationError": {
         "properties": {
@@ -104,35 +201,35 @@
             "items": {
               "$ref": "#/components/schemas/ValidationError"
             },
-            "title": "Detail",
-            "type": "array"
+            "type": "array",
+            "title": "Detail"
           }
         },
-        "title": "HTTPValidationError",
-        "type": "object"
+        "type": "object",
+        "title": "HTTPValidationError"
       },
       "PriceData": {
         "properties": {
-          "close": {
-            "title": "Close",
-            "type": "number"
-          },
-          "high": {
-            "title": "High",
-            "type": "number"
-          },
-          "low": {
-            "title": "Low",
-            "type": "number"
+          "time": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Time"
           },
           "open": {
-            "title": "Open",
-            "type": "number"
+            "type": "number",
+            "title": "Open"
           },
-          "time": {
-            "format": "date-time",
-            "title": "Time",
-            "type": "string"
+          "high": {
+            "type": "number",
+            "title": "High"
+          },
+          "low": {
+            "type": "number",
+            "title": "Low"
+          },
+          "close": {
+            "type": "number",
+            "title": "Close"
           },
           "volume": {
             "anyOf": [
@@ -146,6 +243,7 @@
             "title": "Volume"
           }
         },
+        "type": "object",
         "required": [
           "time",
           "open",
@@ -153,31 +251,30 @@
           "low",
           "close"
         ],
-        "title": "PriceData",
-        "type": "object"
+        "title": "PriceData"
       },
       "Symbols": {
+        "properties": {
+          "symbols": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Symbols",
+            "description": "종목 코드 리스트 (예: ['BTCUSDT', 'ETHUSDT'])"
+          }
+        },
+        "type": "object",
+        "required": [
+          "symbols"
+        ],
+        "title": "Symbols",
         "example": {
           "symbols": [
             "BTCUSDT",
             "ETHUSDT"
           ]
-        },
-        "properties": {
-          "symbols": {
-            "description": "종목 코드 리스트 (예: ['BTCUSDT', 'ETHUSDT'])",
-            "items": {
-              "type": "string"
-            },
-            "title": "Symbols",
-            "type": "array"
-          }
-        },
-        "required": [
-          "symbols"
-        ],
-        "title": "Symbols",
-        "type": "object"
+        }
       },
       "ValidationError": {
         "properties": {
@@ -192,128 +289,26 @@
                 }
               ]
             },
-            "title": "Location",
-            "type": "array"
+            "type": "array",
+            "title": "Location"
           },
           "msg": {
-            "title": "Message",
-            "type": "string"
+            "type": "string",
+            "title": "Message"
           },
           "type": {
-            "title": "Error Type",
-            "type": "string"
+            "type": "string",
+            "title": "Error Type"
           }
         },
+        "type": "object",
         "required": [
           "loc",
           "msg",
           "type"
         ],
-        "title": "ValidationError",
-        "type": "object"
+        "title": "ValidationError"
       }
     }
-  },
-  "info": {
-    "description": "차트 패턴 매칭을 위한 API 서버",
-    "title": "Chart Pattern API",
-    "version": "1.0.0"
-  },
-  "openapi": "3.1.0",
-  "paths": {
-    "/health": {
-      "get": {
-        "description": "API 서버의 상태를 확인하는 엔드포인트",
-        "operationId": "health_check",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "API 서버 상태 확인",
-        "tags": [
-          "Health Check"
-        ]
-      }
-    },
-    "/v1/chart-similarity/{symbol}": {
-      "get": {
-        "description": "심볼별 최신 차트 유사도 결과 리스트를 반환합니다.",
-        "operationId": "chart_similarity_latest",
-        "parameters": [
-          {
-            "description": "심볼 (예: BTCUSDT, ETHUSDT, ..)",
-            "in": "path",
-            "name": "symbol",
-            "required": true,
-            "schema": {
-              "description": "심볼 (예: BTCUSDT, ETHUSDT, ..)",
-              "title": "Symbol",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ChartSimilarityList"
-                }
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "차트 유사도 결과 조회",
-        "tags": [
-          "Chart Similarity",
-          "Chart Similarity"
-        ]
-      }
-    },
-    "/v1/symbols": {
-      "get": {
-        "description": "종목 코드 리스트를 반환합니다.",
-        "operationId": "symbols",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Symbols"
-                }
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "종목 코드 리스트 조회",
-        "tags": [
-          "Symbols",
-          "Symbols"
-        ]
-      }
-    }
-  },
-  "servers": [
-    {
-      "url": "/api"
-    }
-  ]
+  }
 }
