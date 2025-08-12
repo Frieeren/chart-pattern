@@ -54,7 +54,7 @@ describe('Main 페이지', () => {
     expect(symbolSelect).toBeNull();
   });
 
-  test('3. 라이브 차트 토글 버튼 클릭 시 라이브 버튼이 비활성화되고 딜레이 버튼이 활성화되는지 테스트합니다.', async () => {
+  test('3. 라이브 차트 토글 버튼 클릭 시 라이브 버튼이 활성화되고 딜레이 버튼이 비활성화되는지 테스트합니다.', async () => {
     const { router } = renderWithRouter({ initialEntries: ['/'] });
 
     await act(async () => {
@@ -63,14 +63,14 @@ describe('Main 페이지', () => {
 
     await waitFor(async () => {
       // given
-      const initialButton = screen.getByRole('button', { name: /live on/ });
+      const initialButton = screen.getByRole('button', { name: /live off/ });
       expect(initialButton).toBeTruthy();
 
       // when
       await userEvent.click(initialButton);
 
       // then
-      const clickedButton = screen.getByRole('button', { name: /live off/ });
+      const clickedButton = screen.getByRole('button', { name: /live on/ });
       expect(clickedButton).toBeTruthy();
     });
   });
