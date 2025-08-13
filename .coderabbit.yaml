@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+language: "ko-KR"
+early_access: false
+reviews:
+  profile: "chill" # 리뷰 스타일을 지정(chill, assertive)
+  collapse_walkthrough: true # 긴 리뷰는 접어서 표시
+  request_changes_workflow: false # 리뷰에서 문제를 발견했을 때 자동으로 “Changes requested” 상태로 PR에 표시할 수 있어요
+  high_level_summary: true # 리뷰 마지막에 전체 요약 코멘트를 작성해줘요
+  poem: false # 리뷰에 재미 요소를 생성해주는데, 보통 false 권장한다 해요
+  review_status: true # 각 파일/라인에 대해 “좋음 / 개선 필요” 등의 리뷰 상태 뱃지를 표시해줘요
+  auto_review:
+    enabled: true # PR이 생성되거나 업데이트될 때 자동으로 리뷰를 시작할지 여부를 나타내요
+    drafts: false # true이면 draft PR에도 자동 리뷰해줘요. false면 draft PR은 무시해요
