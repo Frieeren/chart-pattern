@@ -1,8 +1,13 @@
 import { useToggle } from '@web/shared/hooks/useToggle';
 import type { IntervalOption, RangeOption, SymbolOption } from '@web/shared/types/domain';
-import { FinancialChart } from '../FinancialChart';
+import { Suspense, lazy } from 'react';
 import { LiveToggle } from '../LiveToggle';
-import { RealTimeChart } from '../TVChart/RealTimeChart';
+
+const FinancialChart = lazy(() => import('../FinancialChart').then(module => ({ default: module.FinancialChart })));
+const RealTimeChart = lazy(() =>
+  import('../TVChart/RealTimeChart').then(module => ({ default: module.RealTimeChart }))
+);
+
 import { chartViewSection } from './style.css';
 
 interface ChartViewProps {
@@ -47,11 +52,16 @@ export const ChartView: React.FC<ChartViewProps> = ({ interval = '5', range = '1
   return (
     <div className={chartViewSection}>
       <LiveToggle value={isLive} onChange={onToggle} />
-      {isLive ? (
-        <RealTimeChart symbol={symbol?.code || ''} interval={interval} range={range} />
-      ) : (
-        <FinancialChart data={generateMockData(200)} />
-      )}
+      <div style={{ display: isLive ? 'none' : 'block', height: '100%', width: '100%' }}>
+        <Suspense>
+          <FinancialChart data={generateMockData(200)} />
+        </Suspense>
+      </div>
+      <div style={{ display: isLive ? 'block' : 'none', height: '100%', width: '100%' }}>
+        <Suspense>
+          <RealTimeChart symbol={symbol?.code || ''} interval={interval} range={range} />
+        </Suspense>
+      </div>
     </div>
   );
 };
