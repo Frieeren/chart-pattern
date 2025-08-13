@@ -49,12 +49,21 @@ const generateMockData = (length: number) => {
 export const ChartView: React.FC<ChartViewProps> = ({ interval = '5', range = '1D', symbol }) => {
   const [isLive, onToggle] = useToggle(false);
 
+  const handleSelectRange = (range: {
+    start: string;
+    end: string;
+    startTimestamp: number;
+    endTimestamp: number;
+  }) => {
+    console.log(range);
+  };
+
   return (
     <div className={chartViewSection}>
       <LiveToggle value={isLive} onChange={onToggle} />
       <div style={{ display: isLive ? 'none' : 'block', height: '100%', width: '100%' }}>
         <Suspense>
-          <FinancialChart data={generateMockData(200)} />
+          <FinancialChart data={generateMockData(200)} onSelectRange={handleSelectRange} />
         </Suspense>
       </div>
       <div style={{ display: isLive ? 'block' : 'none', height: '100%', width: '100%' }}>

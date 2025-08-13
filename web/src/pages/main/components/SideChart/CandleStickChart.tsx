@@ -6,11 +6,20 @@ import ReactApexChart from 'react-apexcharts';
 interface CandleStickChartProps {
   options?: ApexOptions;
   data?: ChartSimilarityBasePriceData;
+  onSelectRange?: (range: {
+    start: string;
+    end: string;
+    startTimestamp: number;
+    endTimestamp: number;
+  }) => void;
 }
 
 const defaultOptions: ApexOptions = {
   chart: {
     type: 'candlestick',
+    selection: {
+      enabled: true,
+    },
   },
   title: {
     text: '',
@@ -51,10 +60,34 @@ const defaultOptions: ApexOptions = {
   },
 };
 
-const CandleStickChart = ({ options, data }: CandleStickChartProps) => {
+const CandleStickChart = ({ options, data, onSelectRange }: CandleStickChartProps) => {
   const chartOptions = useMemo(() => {
-    return { ...defaultOptions, ...options };
-  }, [options]);
+    const baseOptions = {
+      ...defaultOptions,
+      chart: {
+        ...defaultOptions.chart,
+        events: {
+          selection: (_: unknown, { xaxis }: { xaxis: { min: number; max: number } }) => {
+            const startTime = new Date(xaxis.min);
+            const endTime = new Date(xaxis.max);
+
+            const rangeData = {
+              start: startTime.toISOString(),
+              end: endTime.toISOString(),
+              startTimestamp: xaxis.min,
+              endTimestamp: xaxis.max,
+            };
+
+            if (onSelectRange) {
+              onSelectRange(rangeData);
+            }
+          },
+        },
+      },
+    };
+
+    return { ...baseOptions, ...options };
+  }, [options, onSelectRange]);
 
   const chartSeries = useMemo(() => {
     return data?.map(item => {
