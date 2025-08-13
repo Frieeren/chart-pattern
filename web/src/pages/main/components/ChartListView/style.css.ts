@@ -29,20 +29,19 @@ export const chartCard = style({
   borderRadius: '8px',
   border: '1px solid #333333',
   backgroundColor: '#252525',
-  transition: 'transform 0.2s, box-shadow 0.2s, background-color 0.2s',
+  transition: 'box-shadow 0.2s, background-color 0.2s',
   position: 'relative',
-  ':hover': {
-    transform: 'translateY(-2px)',
-  },
 });
 
 export const chartCardHeader = style({
   display: 'flex',
   alignItems: 'center',
-  flexDirection: 'column',
+  justifyContent: 'space-between',
   position: 'absolute',
   bottom: 12,
   left: 12,
+  zIndex: 1,
+  width: 'calc(100% - 24px)',
 });
 
 export const chartCardTitle = style({
@@ -73,4 +72,19 @@ export const chartCardSkeleton = style({
 
 export const chartCardChartWrapper = style({
   height: CHART_HEIGHT,
+});
+
+export const chartCardLinkButton = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  padding: 8,
+  borderRadius: '50%',
+  backgroundColor: '#333333',
+  cursor: 'pointer',
+  transition: 'background-color 0.2s, transform 0.2s',
+  ':hover': {
+    backgroundColor: '#444444',
+    transform: 'translateX(4px)',
+  },
 });
