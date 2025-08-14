@@ -25,19 +25,19 @@ export const safeValidateInterval = (input: unknown): ValidationResult<IntervalO
   }
 };
 
-export const validateSymbolId = (input: unknown): string | number => {
+export const validateSymbolId = (input: unknown): string => {
   if (input === null || input === undefined) {
     throw new Error('종목 ID는 필수입니다.');
   }
 
-  if (typeof input !== 'string' && typeof input !== 'number') {
-    throw new Error('종목 ID는 문자열 또는 숫자여야 합니다.');
+  if (typeof input !== 'string') {
+    throw new Error('종목 ID는 문자열이어야 합니다.');
   }
 
   return input;
 };
 
-export const safeValidateSymbolId = (input: unknown): ValidationResult<string | number> => {
+export const safeValidateSymbolId = (input: unknown): ValidationResult<string> => {
   try {
     const data = validateSymbolId(input);
     return { success: true, data };

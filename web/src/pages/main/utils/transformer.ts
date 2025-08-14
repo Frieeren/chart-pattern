@@ -3,7 +3,7 @@ import type { DeepPartial } from 'react-hook-form';
 
 export interface FilterFormFields {
   interval: IntervalOption;
-  symbol: string | number | null;
+  symbol: string | null;
 }
 
 export const paramsToFieldsTransformer = (params: Record<string, string>): Partial<FilterFormFields> => {

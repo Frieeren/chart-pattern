@@ -4,7 +4,7 @@ import { errorMessage, filterItem, filterLabel, filterSelect } from './style.css
 
 interface FilterSelectProps {
   label: string;
-  options: { value: string | number; label: string }[];
+  options: { value: string; label: string }[];
   error?: string | null;
   name?: string;
   onChange?: (event: React.ChangeEvent<HTMLSelectElement>) => void;
