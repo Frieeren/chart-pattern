@@ -17,9 +17,6 @@ interface CandleStickChartProps {
 const defaultOptions: ApexOptions = {
   chart: {
     type: 'candlestick',
-    selection: {
-      enabled: true,
-    },
   },
   title: {
     text: '',
@@ -66,6 +63,9 @@ const CandleStickChart = ({ options, data, onSelectRange }: CandleStickChartProp
       ...defaultOptions,
       chart: {
         ...defaultOptions.chart,
+        selection: {
+          enabled: !!onSelectRange,
+        },
         events: {
           selection: (_: unknown, { xaxis }: { xaxis: { min: number; max: number } }) => {
             const startTime = new Date(xaxis.min);
