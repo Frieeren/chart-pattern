@@ -14,7 +14,7 @@ export const toggleButton = style({
   borderRadius: '16px',
   border: '1px solid rgba(255, 255, 255, 0.2)',
   cursor: 'pointer',
-  transition: 'all 0.3s ease',
+  transition: 'background-color 0.3s ease, border-color 0.3s ease',
   outline: 'none',
   display: 'flex',
   alignItems: 'center',
@@ -50,5 +50,6 @@ export const liveDot = style({
   backgroundColor: '#4ade80',
   borderRadius: '50%',
   marginRight: '4px',
+  willChange: 'background-position',
   animation: `${pulse} 2s infinite`,
 });
