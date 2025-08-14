@@ -9,4 +9,5 @@ export const chartViewSection = style({
   height: '100%',
   color: '#e0e0e0',
   width: '100%',
+  gap: '16px',
 });

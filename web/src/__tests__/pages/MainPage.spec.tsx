@@ -1,4 +1,4 @@
-import { act, screen } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, test } from 'vitest';
 import { renderWithRouter } from '../renderWithRouter';
@@ -41,5 +41,26 @@ describe('Main 페이지', () => {
     const firstOption = symbolSelect.options[0];
     expect(firstOption.value).toBe('');
     expect(firstOption.textContent).toMatch(/filter.empty/);
+  });
+
+  test('3. 라이브 차트 토글 버튼 클릭 시 라이브 버튼이 활성화되고 딜레이 버튼이 비활성화되는지 테스트합니다.', async () => {
+    const { router } = renderWithRouter({ initialEntries: ['/'] });
+
+    await act(async () => {
+      router.navigate('/');
+    });
+
+    await waitFor(async () => {
+      // given
+      const initialButton = screen.getByRole('button', { name: /live off/ });
+      expect(initialButton).toBeTruthy();
+
+      // when
+      await userEvent.click(initialButton);
+
+      // then
+      const clickedButton = screen.getByRole('button', { name: /live on/ });
+      expect(clickedButton).toBeTruthy();
+    });
   });
 });

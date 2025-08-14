@@ -8,4 +8,5 @@ export const visuallyHidden = style({
   border: 0,
   padding: 0,
   whiteSpace: 'nowrap',
+  overflow: 'hidden',
 });
