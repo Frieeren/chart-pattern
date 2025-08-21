@@ -1,5 +1,12 @@
 name: API CD
 
+env:
+  DB_USER: ${{ secrets.DB_USER }}
+  DB_PASSWD: ${{ secrets.DB_PASSWD }}
+  DB_HOST: ${{ secrets.DB_HOST }}
+  DB_PORT: ${{ secrets.DB_PORT }}
+  DB_NAME: ${{ secrets.DB_NAME }}
+
 on:
   workflow_dispatch:
   push:
