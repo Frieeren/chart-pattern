@@ -11,6 +11,7 @@ on:
 jobs:
   code-quality-api:
     runs-on: self-hosted
+    timeout-minutes: 30
     defaults:
       run:
         working-directory: api
@@ -36,6 +37,7 @@ jobs:
 
   code-quality-web:
     runs-on: self-hosted
+    timeout-minutes: 30
     defaults:
       run:
         working-directory: web
