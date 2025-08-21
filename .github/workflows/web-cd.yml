@@ -1,0 +1,38 @@
+name: Web CD
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - web/**
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: /workspace/chart-pattern
+    steps:
+      - name: 📦 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🚀 Deploy
+        run: docker compose up -d --build nginx
+
+      - name: ✅ Health Check
+        run: |
+          echo "Verifying deployment..."
+          docker compose ps nginx
+
+          if docker compose ps nginx | grep -q "Up"; then
+            echo "✅ Nginx container is running successfully"
+          else
+            echo "❌ Nginx container is not running"
+            exit 1
+          fi
+
+          echo "📋 Recent nginx logs:"
+          docker compose logs --tail=10 nginx
