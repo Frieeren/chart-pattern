@@ -11,14 +11,18 @@ on:
 jobs:
   deploy:
     runs-on: self-hosted
-    timeout-minutes: 30
+    timeout-minutes: 60
     steps:
       - name: 📦 Checkout Repository
         uses: actions/checkout@v4
 
       - name: 🚀 Deploy
         run: |
-          docker compose build nginx --progress=plain --no-cache
+          echo "$(date): 빌드 시작"
+          export COMPOSE_BAKE=true
+          docker compose build nginx --no-cache
+          
+          echo "$(date): 컨테이너 시작"
           docker compose up -d nginx
 
       - name: ✅ Health Check
