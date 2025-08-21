@@ -20,7 +20,7 @@ jobs:
         run: |
           echo "$(date): 빌드 시작"
           export COMPOSE_BAKE=true
-          docker compose build nginx --no-cache
+          docker compose build nginx
           
           echo "$(date): 컨테이너 시작"
           docker compose up -d nginx

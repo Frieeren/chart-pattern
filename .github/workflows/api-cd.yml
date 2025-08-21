@@ -27,7 +27,7 @@ jobs:
         run: |
           echo "$(date): 빌드 시작"
           export COMPOSE_BAKE=true
-          docker compose build api --no-cache
+          docker compose build api
           
           echo "$(date): 컨테이너 시작"
           docker compose up -d api
