@@ -1,5 +1,8 @@
 name: Web CD
 
+env:
+  WORKSPACE_PATH: ${{ secrets.WORKSPACE_PATH }}
+
 on:
   workflow_dispatch:
   push:
@@ -14,7 +17,7 @@ jobs:
     timeout-minutes: 30
     defaults:
       run:
-        working-directory: /workspace/chart-pattern
+        working-directory: ${{ env.WORKSPACE_PATH }}/chart-pattern
     steps:
       - name: 📦 Checkout Repository
         uses: actions/checkout@v4
