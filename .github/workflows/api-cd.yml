@@ -30,7 +30,9 @@ jobs:
           echo "Verifying deployment..."
           docker compose ps api
 
-          if docker compose ps api | grep -q "Up"; then
+          CONTAINER_ID=$(docker compose ps api --status running --quiet)
+
+          if [ -n "$CONTAINER_ID" ]; then
             echo "✅ API container is running successfully"
           else
             echo "❌ API container is not running"

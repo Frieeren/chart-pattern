@@ -30,7 +30,9 @@ jobs:
           echo "Verifying deployment..."
           docker compose ps nginx
 
-          if docker compose ps nginx | grep -q "Up"; then
+          CONTAINER_ID=$(docker compose ps nginx --status running --quiet)
+
+          if [ -n "$CONTAINER_ID" ]; then
             echo "✅ Nginx container is running successfully"
           else
             echo "❌ Nginx container is not running"
