@@ -46,4 +46,9 @@ services:
     ports:
       - "8001:8001"
     environment:
+      - DB_USER=${MYSQL_USER}
+      - DB_PASSWD=${MYSQL_PASSWORD}
+      - DB_HOST=${MYSQL_HOST}
+      - DB_PORT=${MYSQL_PORT}
+      - DB_NAME=${MYSQL_DATABASE}
       - TZ=Asia/Seoul
