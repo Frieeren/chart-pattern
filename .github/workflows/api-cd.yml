@@ -1,8 +1,5 @@
 name: API CD
 
-env:
-  WORKSPACE_PATH: ${{ secrets.WORKSPACE_PATH }}
-
 on:
   workflow_dispatch:
   push:
@@ -15,9 +12,6 @@ jobs:
   deploy:
     runs-on: self-hosted
     timeout-minutes: 30
-    defaults:
-      run:
-        working-directory: ${{ env.WORKSPACE_PATH }}/chart-pattern
     steps:
       - name: 📦 Checkout Repository
         uses: actions/checkout@v4
