@@ -1,0 +1,41 @@
+name: API CD
+
+env:
+  WORKSPACE_PATH: ${{ secrets.WORKSPACE_PATH }}
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - api/**
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: ${{ env.WORKSPACE_PATH }}/chart-pattern
+    steps:
+      - name: 📦 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🚀 Deploy
+        run: docker compose up -d --build api
+
+      - name: ✅ Health Check
+        run: |
+          echo "Verifying deployment..."
+          docker compose ps api
+
+          if docker compose ps api | grep -q "Up"; then
+            echo "✅ API container is running successfully"
+          else
+            echo "❌ API container is not running"
+            exit 1
+          fi
+
+          echo "📋 Recent api logs:"
+          docker compose logs --tail=10 api
