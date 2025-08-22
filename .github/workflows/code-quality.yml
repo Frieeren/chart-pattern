@@ -10,7 +10,7 @@ on:
 
 jobs:
   code-quality-api:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     timeout-minutes: 30
     defaults:
       run:
@@ -36,7 +36,7 @@ jobs:
         run: uv run ruff check --fix
 
   code-quality-web:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     timeout-minutes: 30
     defaults:
       run:
