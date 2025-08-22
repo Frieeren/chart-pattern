@@ -68,12 +68,9 @@ jobs:
           EOF
 
       - name: 🚀 Deploy
-        run: |
-          echo "$(date): 컨테이너 이미지 풀"
-          docker compose pull api
-          
-          echo "$(date): 컨테이너 시작"
+        run: |          
           docker compose up -d api
+          docker rmi ${{ secrets.DOCKER_REGISTRY }}/chart-pattern:api-latest
 
       - name: ✅ Health Check
         run: |
@@ -88,6 +85,3 @@ jobs:
             echo "❌ API container is not running"
             exit 1
           fi
-
-          echo "📋 Recent api logs:"
-          docker compose logs --tail=10 api

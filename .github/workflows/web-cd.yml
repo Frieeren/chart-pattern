@@ -12,10 +12,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 60
-    env:
-      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      DOCKER_REGISTRY: ${{ secrets.DOCKER_REGISTRY }}
     steps:
       - name: 📦 Checkout Repository
         uses: actions/checkout@v4
@@ -49,8 +45,6 @@ jobs:
     needs: build
     runs-on: self-hosted
     timeout-minutes: 60
-    env:
-      DOCKER_REGISTRY: ${{ secrets.DOCKER_REGISTRY }}
     steps:
       - name: 📦 Checkout Repository
         uses: actions/checkout@v4
@@ -59,15 +53,18 @@ jobs:
         run: |
           cat > .env << EOF
           DOCKER_REGISTRY=${{ secrets.DOCKER_REGISTRY }}
+          MYSQL_USER=${{ secrets.MYSQL_USER }}
+          MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}
+          MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}
+          MYSQL_HOST=${{ secrets.MYSQL_HOST }}
+          MYSQL_PORT=${{ secrets.MYSQL_PORT }}
+          MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}
           EOF
 
       - name: 🚀 Deploy
         run: |
-          echo "$(date): 컨테이너 이미지 풀"
-          docker compose pull nginx
-          
-          echo "$(date): 컨테이너 시작"
           docker compose up -d nginx
+          docker rmi ${{ secrets.DOCKER_REGISTRY }}/chart-pattern:nginx-latest
 
       - name: ✅ Health Check
         run: |
@@ -82,6 +79,3 @@ jobs:
             echo "❌ Nginx container is not running"
             exit 1
           fi
-
-          echo "📋 Recent nginx logs:"
-          docker compose logs --tail=10 nginx
