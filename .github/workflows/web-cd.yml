@@ -64,7 +64,6 @@ jobs:
       - name: 🚀 Deploy
         run: |
           docker compose up -d nginx
-          docker rmi ${{ secrets.DOCKER_REGISTRY }}/chart-pattern:nginx-latest
 
       - name: ✅ Health Check
         run: |

@@ -70,7 +70,6 @@ jobs:
       - name: 🚀 Deploy
         run: |          
           docker compose up -d api
-          docker rmi ${{ secrets.DOCKER_REGISTRY }}/chart-pattern:api-latest
 
       - name: ✅ Health Check
         run: |
