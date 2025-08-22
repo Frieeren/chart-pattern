@@ -2,9 +2,7 @@ version: "3"
 services:
   nginx:
     container_name: nginx
-    build:
-      context: ./web
-      dockerfile: Dockerfile
+    image: ${DOCKER_REGISTRY}/chart-pattern:nginx-latest
     restart: always
     ports:
       - "80:80" # HTTP
@@ -40,9 +38,7 @@ services:
       - ./infra/mysql/data:/var/lib/mysql
 
   api:
-    build:
-      context: ./api
-      dockerfile: Dockerfile
+    image: ${DOCKER_REGISTRY}/chart-pattern:api-latest
     ports:
       - "8001:8001"
     environment:
