@@ -1,11 +1,5 @@
 name: API CD
 
-env:
-  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-  DOCKER_REGISTRY: ${{ secrets.DOCKER_REGISTRY }}
-  DOCKER_IMAGE_VERSION: api-latest
-
 on:
   workflow_dispatch:
   push:
@@ -19,6 +13,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      DOCKER_REGISTRY: ${{ secrets.DOCKER_REGISTRY }}
       MYSQL_USER: ${{ secrets.MYSQL_USER }}
       MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
       MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
@@ -43,7 +40,7 @@ jobs:
         with:
           context: ./api
           push: true
-          tags: ${{ env.DOCKER_REGISTRY }}/chart-pattern:${{ env.DOCKER_IMAGE_VERSION }}
+          tags: ${{ env.DOCKER_REGISTRY }}/chart-pattern:api-latest
           platforms: linux/amd64,linux/arm64
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -52,6 +49,14 @@ jobs:
     needs: build
     runs-on: self-hosted
     timeout-minutes: 60
+    env:
+      DOCKER_REGISTRY: ${{ secrets.DOCKER_REGISTRY }}
+      MYSQL_USER: ${{ secrets.MYSQL_USER }}
+      MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+      MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+      MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
+      MYSQL_PORT: ${{ secrets.MYSQL_PORT }}
+      MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
     steps:
       - name: 📦 Checkout Repository
         uses: actions/checkout@v4
