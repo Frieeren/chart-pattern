@@ -1,5 +1,8 @@
 name: Web CD
 
+env:
+  WORKSPACE_PATH: ${{ secrets.WORKSPACE_PATH }}
+
 on:
   workflow_dispatch:
   push:
@@ -12,20 +15,31 @@ jobs:
   deploy:
     runs-on: self-hosted
     timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: ${{ env.WORKSPACE_PATH }}/chart-pattern
     steps:
       - name: 📦 Checkout Repository
-        uses: actions/checkout@v4
+        run: |          
+          git remote set-head origin --auto
+          DEFAULT_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@')
+          
+          git checkout $DEFAULT_BRANCH
+          git pull origin $DEFAULT_BRANCH
 
       - name: 📦 Create .env file
         run: |
+          cd web
+
           cat > .env << EOF
-          DOCKER_REGISTRY=${{ secrets.DOCKER_REGISTRY }}
-          MYSQL_USER=${{ secrets.MYSQL_USER }}
-          MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}
-          MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}
-          MYSQL_HOST=${{ secrets.MYSQL_HOST }}
-          MYSQL_PORT=${{ secrets.MYSQL_PORT }}
-          MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}
+          VITE_GOOGLE_ANALYTICS_TRAKING_ID=${{ secrets.VITE_GOOGLE_ANALYTICS_TRAKING_ID }}
+          VITE_SENTRY_DSN=${{ secrets.VITE_SENTRY_DSN }}
+          SENTRY_ORG=${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT=${{ secrets.SENTRY_PROJECT }}
+          SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
+          VITE_FEATURE_CHANNELIO=${{ secrets.VITE_FEATURE_CHANNELIO }}
+          VITE_CHANNELIO_PLUGIN_KEY=${{ secrets.VITE_CHANNELIO_PLUGIN_KEY }}
+          VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }}
           EOF
 
       - name: 🚀 Deploy
