@@ -1,0 +1,46 @@
+name: API CD
+
+env:
+  WORKSPACE_PATH: ${{ secrets.WORKSPACE_PATH }}
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - api/**
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: ${{ env.WORKSPACE_PATH }}/chart-pattern
+    steps:
+      - name: 📦 Checkout Repository
+        run: |
+          git remote set-head origin --auto
+          DEFAULT_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@')
+          
+          git checkout $DEFAULT_BRANCH
+          git pull origin $DEFAULT_BRANCH
+
+      - name: 🚀 Deploy
+        run: |          
+          docker compose up -d api --build
+
+      - name: ✅ Health Check
+        run: |
+          echo "Verifying deployment..."
+          docker compose ps api
+
+          CONTAINER_ID=$(docker compose ps api --status running --quiet)
+
+          if [ -n "$CONTAINER_ID" ]; then
+            echo "✅ API container is running successfully"
+          else
+            echo "❌ API container is not running"
+            exit 1
+          fi
