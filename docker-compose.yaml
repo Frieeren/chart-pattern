@@ -1,6 +1,6 @@
 services:
   nginx:
-    container_name: nginx
+    container_name: chart-pattern-nginx
     build:
       context: ./web
       dockerfile: Dockerfile
@@ -14,6 +14,7 @@ services:
       - TZ=Asia/Seoul
 
   db:
+    container_name: chart-pattern-db
     image: mysql:latest
     environment:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
@@ -27,6 +28,7 @@ services:
       - ./infra/mysql/data:/var/lib/mysql
 
   api:
+    container_name: chart-pattern-api
     build:
       context: ./api
       dockerfile: Dockerfile
