@@ -1,31 +1,20 @@
 services:
   nginx:
-    container_name: nginx
+    container_name: chart-pattern-nginx
     build:
       context: ./web
       dockerfile: Dockerfile
     restart: always
     ports:
-      - "80:80" # HTTP
-      - "443:443" # HTTPS
+      - "3001:80" # HTTP
     volumes:
       - ./infra/nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./infra/nginx/letsencrypt:/etc/letsencrypt
-      - ./infra/nginx/www:/var/www/certbot
       - ./infra/nginx/logs:/var/log/nginx
     environment:
       - TZ=Asia/Seoul
 
-  certbot:
-    image: certbot/certbot
-    container_name: certbot
-    volumes:
-      - ./infra/nginx/letsencrypt:/etc/letsencrypt
-      - ./infra/nginx/www:/var/www/certbot
-    depends_on:
-      - nginx
-
   db:
+    container_name: chart-pattern-db
     image: mysql:latest
     environment:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
@@ -39,6 +28,7 @@ services:
       - ./infra/mysql/data:/var/lib/mysql
 
   api:
+    container_name: chart-pattern-api
     build:
       context: ./api
       dockerfile: Dockerfile
