@@ -31,6 +31,8 @@ class EvaluationStrategy(ABC):
     similarities: List[Tuple[pd.Timestamp, float, int]],
     up_count: int,
     down_count: int,
+    up_price_changes: List[float] | None = None,
+    down_price_changes: List[float] | None = None,
   ) -> None:
     """
     백테스팅 결과를 출력합니다.
@@ -41,6 +43,8 @@ class EvaluationStrategy(ABC):
       similarities: 유사도 결과 리스트 (시점, 유사도, 인덱스)
       up_count: 상승 개수
       down_count: 하락 개수
+      up_price_changes: 상승 패턴들의 가격 변동률 리스트 (선택)
+      down_price_changes: 하락 패턴들의 가격 변동률 리스트 (선택)
     """
     pass
 

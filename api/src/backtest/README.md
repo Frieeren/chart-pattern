@@ -58,17 +58,21 @@ uv run python -m src.backtest.backtest --symbol BTCUSDT --period 300 --tick_coun
   
 - `--n` (선택, 기본값: 100): 무작위 시점 개수
   - 예: `100` (100개의 무작위 시점에서 후보 패턴 선택)
+  
+- `--strategy` (선택, 기본값: simple): 평가 전략
+  - `simple`: 기본 다수결 전략
+  - `price_analysis`: 가격 변동률 분석 전략 (평균 상승/하락률 계산)
 
 ### 실행 예시
 
 #### Docker로 실행
 
 ```bash
-# BTCUSDT, 300틱 패턴, 12틱 후 방향 예측, 100개 시점 (단일 패턴)
+# BTCUSDT, 300틱 패턴, 12틱 후 방향 예측, 100개 시점 (기본 전략)
 docker-compose exec backtest uv run python -m src.backtest.backtest --symbol BTCUSDT --period 300 --tick_count 12 --n 100
 
-# ETHUSDT, 200틱 패턴, 24틱 후 방향 예측, 50개 시점
-docker-compose exec backtest uv run python -m src.backtest.backtest --symbol ETHUSDT --period 200 --tick_count 24 --n 50
+# ETHUSDT, 200틱 패턴, 24틱 후 방향 예측, 50개 시점 (가격 변동률 분석)
+docker-compose exec backtest uv run python -m src.backtest.backtest --symbol ETHUSDT --period 200 --tick_count 24 --n 50 --strategy price_analysis
 ```
 
 #### 로컬에서 실행
@@ -144,11 +148,17 @@ result = run_backtest(
 
 평가 전략은 평가와 출력을 모두 담당합니다.
 
-### `SimpleMajorityStrategy` 전략
+### `SimpleMajorityStrategy` 전략 (기본)
 - 상승/하락 중 많은 쪽을 선택
 - 해당 비율을 확률로 반환
 - 예: 상승 7개, 하락 3개 → 상승 70%
 - 개별 패턴 결과와 전체 요약을 출력
+
+### `PriceAnalysisStrategy` 전략
+- 상승/하락 중 많은 쪽을 선택하고 비율을 확률로 반환
+- **방향에 따른 평균 가격 변동률 분석**
+- 예: 상승 60개 → 평균 +2.5% 상승
+- 예: 하락 40개 → 평균 -1.8% 하락
 
 ## 확장 가능성
 

@@ -2,8 +2,8 @@
 알고리즘 백테스팅 스크립트
 
 사용법:
-    python -m src.backtest.backtest --symbol BTCUSDT --period 300 --tick_count 12 --n 100
-    python -m src.backtest.backtest --symbol BTCUSDT --period 300 --tick_count 12 --n 100 --num_patterns 5
+    python -m src.backtest.backtest --symbol BTCUSDT --period 300 --tick_count 12 --n 100 --strategy simple
+    python -m src.backtest.backtest --symbol BTCUSDT --period 300 --tick_count 12 --n 100 --strategy price_analysis
 """
 
 import argparse
@@ -18,6 +18,7 @@ from src.backtest.algorithm_interface import SimilarityAlgorithm
 from src.backtest.candleonly_algorithm import CandleOnlyAlgorithm
 from src.backtest.evaluation_strategy import SimpleMajorityStrategy
 from src.backtest.evaluation_strategy_interface import EvaluationStrategy
+from src.backtest.price_analysis_strategy import PriceAnalysisStrategy
 from src.backtest.random_strategy import RandomStrategy
 from src.constants.symbol_table_map import get_table_name_by_symbol
 from src.db.session import SessionLocal
@@ -150,17 +151,32 @@ def test_single_pattern(
   top_n = min(10, len(similarities))
   top_results = similarities[:top_n]
 
-  # 상위 10개의 상승/하락 판단
+  # 상위 10개의 상승/하락 판단 및 가격 변동률 계산
   up_count = 0
   down_count = 0
+  up_price_changes: List[float] = []
+  down_price_changes: List[float] = []
 
   for start_time, _, end_idx in top_results:
     try:
-      direction = calculate_price_direction(all_data, end_idx + 1, tick_count)
+      # 패턴 끝 시점 이후 tick_count 틱의 가격 변동률 계산
+      start_idx = end_idx + 1
+      end_idx_price = start_idx + tick_count - 1
+      
+      if end_idx_price >= len(all_data):
+        raise ValueError("데이터가 부족합니다.")
+      
+      start_price = all_data["Close"].iloc[start_idx]
+      end_price = all_data["Close"].iloc[end_idx_price]
+      price_change = ((end_price - start_price) / start_price) * 100  # 퍼센트
+
+      direction = calculate_price_direction(all_data, start_idx, tick_count)
       if direction == "up":
         up_count += 1
+        up_price_changes.append(price_change)
       else:
         down_count += 1
+        down_price_changes.append(price_change)
     except (ValueError, KeyError) as e:
       logger.warning(f"시점 {start_time}에서 방향 판단 실패: {e}")
       continue
@@ -172,6 +188,8 @@ def test_single_pattern(
     similarities=similarities,
     up_count=up_count,
     down_count=down_count,
+    up_price_changes=up_price_changes if up_price_changes else None,
+    down_price_changes=down_price_changes if down_price_changes else None,
   )
 
   # 반환값을 위해 평가
@@ -269,10 +287,22 @@ def main():
   parser.add_argument(
     "--n", type=int, default=100, help="무작위 시점 개수 (기본값: 100)"
   )
+  parser.add_argument(
+    "--strategy",
+    type=str,
+    default="simple",
+    choices=["simple", "price_analysis"],
+    help="평가 전략 (기본값: simple)",
+  )
   args = parser.parse_args()
 
   # 평가 전략 생성 (평가 및 출력 담당)
-  evaluation_strategy = SimpleMajorityStrategy()
+  if args.strategy == "simple":
+    evaluation_strategy = SimpleMajorityStrategy()
+  elif args.strategy == "price_analysis":
+    evaluation_strategy = PriceAnalysisStrategy()
+  else:
+    evaluation_strategy = SimpleMajorityStrategy()
 
   up_count, down_count, (direction, probability) = run_backtest(
     symbol=args.symbol,
