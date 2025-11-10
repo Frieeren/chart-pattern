@@ -125,7 +125,7 @@ docker-compose exec backtest uv run python -m src.backtest.backtest --symbol BTC
 2. **타겟 패턴 선택**: 선택된 시점 중 하나를 무작위로 타겟 패턴으로 선택합니다
 
 3. **유사도 계산**: 타겟 패턴과 나머지 후보 패턴들의 유사도를 계산합니다
-   - 현재는 `CandleOnlyAlgorithm` 사용 (캔들스틱 특징 기반)
+   - 현재는 `ChartSimilarityService` 사용 (캔들스틱 특징 기반)
 
 4. **상위 10개 선택**: 유사도가 높은 상위 10개 패턴을 선택합니다
 

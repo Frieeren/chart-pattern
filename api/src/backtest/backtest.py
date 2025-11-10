@@ -11,8 +11,9 @@ import pandas as pd
 from sqlalchemy import text
 
 from src.backtest.algorithm_interface import SimilarityAlgorithm
-from src.backtest.candleonly_algorithm import CandleOnlyAlgorithm
 from src.backtest.evaluation_strategy_interface import EvaluationStrategy
+from src.backtest.service_algorithm import ServiceSimilarityAlgorithm
+from src.services.chart_similarity_service import ChartSimilarityService
 from src.backtest.strategies import (
   PriceAnalysisStrategy,
   RandomStrategy,
@@ -286,14 +287,14 @@ def run_backtest(
       period: 입력 패턴의 틱 개수 (기본값: 350)
       tick_count: 이후 판단할 틱 개수 (기본값: 150)
       n: 시점 개수 (기본값: 100)
-      algorithm: 사용할 알고리즘 (기본값: CandleOnlyAlgorithm)
+      algorithm: 사용할 알고리즘 (기본값: ServiceSimilarityAlgorithm)
       evaluation_strategy: 평가 전략 (기본값: SimpleMajorityStrategy)
 
     Returns:
       (상승 개수, 하락 개수, (방향, 확률)) 튜플
     """
   if algorithm is None:
-    algorithm = CandleOnlyAlgorithm()
+    algorithm = ServiceSimilarityAlgorithm()
 
   if evaluation_strategy is None:
     evaluation_strategy = SimpleMajorityStrategy()
@@ -366,7 +367,28 @@ def main():
     choices=["simple", "price_analysis", "time_based_average"],
     help="평가 전략 (기본값: simple)",
   )
+  parser.add_argument(
+    "--algorithm",
+    type=str,
+    default="service",
+    choices=["service"],
+    help="유사도 알고리즘 (기본값: service - ChartSimilarityService 사용)",
+  )
   args = parser.parse_args()
+
+  # 알고리즘 생성
+  if args.algorithm == "service":
+    # ChartSimilarityService 사용
+    service = ChartSimilarityService()
+    algorithm = ServiceSimilarityAlgorithm(service)
+  # elif args.algorithm == "candleonly":
+  #   # CandleOnlyService 사용
+  #   service = CandleOnlyService()
+  #   algorithm = ServiceSimilarityAlgorithm(service)
+  else:
+    # 기본값: ChartSimilarityService
+    service = ChartSimilarityService()
+    algorithm = ServiceSimilarityAlgorithm(service)
 
   # 평가 전략 생성 (평가 및 출력 담당)
   if args.strategy == "simple":
@@ -383,6 +405,7 @@ def main():
     period=args.period,
     tick_count=args.tick_count,
     n=args.n,
+    algorithm=algorithm,
     evaluation_strategy=evaluation_strategy,
   )
 
