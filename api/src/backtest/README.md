@@ -25,7 +25,7 @@ docker-compose up -d backtest
 
 ```bash
 # 기본 실행 (단일 패턴)
-docker-compose exec backtest uv run python -m src.backtest.backtest --symbol BTCUSDT --period 300 --tick_count 12 --n 100
+docker-compose exec backtest uv run python -m src.backtest.backtest --symbol BTCUSDT --period 350 --tick_count 150 --n 100
 
 ```
 
@@ -42,7 +42,7 @@ docker-compose stop backtest
 ```bash
 cd api
 uv sync
-uv run python -m src.backtest.backtest --symbol BTCUSDT --period 300 --tick_count 12 --n 100
+uv run python -m src.backtest.backtest --symbol BTCUSDT --period 350 --tick_count 150 --n 100
 ```
 
 ### 파라미터 설명
@@ -51,10 +51,10 @@ uv run python -m src.backtest.backtest --symbol BTCUSDT --period 300 --tick_coun
   - 예: `BTCUSDT`, `ETHUSDT`
   
 - `--period` (필수): 입력 패턴의 틱 개수
-  - 예: `300` (300틱 = 약 25시간, 5분봉 기준)
+  - 예: `300` (350틱 = 1750분, 5분봉 기준)
   
-- `--tick_count` (선택, 기본값: 12): 이후 판단할 틱 개수
-  - 예: `12` (12틱 = 1시간, 5분봉 기준)
+- `--tick_count` (선택, 기본값: 150): 이후 판단할 틱 개수
+  - 예: `12` (150틱 = 750분, 5분봉 기준)
   
 - `--n` (선택, 기본값: 100): 무작위 시점 개수
   - 예: `100` (100개의 무작위 시점에서 후보 패턴 선택)
@@ -69,24 +69,15 @@ uv run python -m src.backtest.backtest --symbol BTCUSDT --period 300 --tick_coun
 #### Docker로 실행
 
 ```bash
-# BTCUSDT, 300틱 패턴, 12틱 후 방향 예측, 100개 시점 (기본 전략)
-docker-compose exec backtest uv run python -m src.backtest.backtest --symbol BTCUSDT --period 300 --tick_count 12 --n 100
+# 기본 값은 350틱 패턴, 150틱 후 방향 예측, 100개 시점
+# BTCUSDT(기본 전략)
+docker-compose exec backtest uv run python -m src.backtest.backtest --symbol BTCUSDT --period 350 --tick_count 150 --n 100
 
-# ETHUSDT, 200틱 패턴, 24틱 후 방향 예측, 50개 시점 (가격 변동률 분석)
-docker-compose exec backtest uv run python -m src.backtest.backtest --symbol ETHUSDT --period 200 --tick_count 24 --n 50 --strategy price_analysis
+# ETHUSDT(가격 변동률 분석)
+docker-compose exec backtest uv run python -m src.backtest.backtest --symbol ETHUSDT --period 350 --tick_count 150 --n 100 --strategy price_analysis
 
-# BTCUSDT, 300틱 패턴, 60틱 후 방향 예측, 100개 시점 (시간 단위 평균 경로 분석)
-docker-compose exec backtest uv run python -m src.backtest.backtest --symbol BTCUSDT --period 300 --tick_count 60 --n 100 --strategy time_based_average
-```
-
-#### 로컬에서 실행
-
-```bash
-# BTCUSDT, 300틱 패턴, 12틱 후 방향 예측, 100개 시점
-python -m src.backtest.backtest --symbol BTCUSDT --period 300 --tick_count 12 --n 100
-
-# ETHUSDT, 200틱 패턴, 24틱 후 방향 예측, 50개 시점
-python -m src.backtest.backtest --symbol ETHUSDT --period 200 --tick_count 24 --n 50
+# BTCUSDT(시간 단위 평균 경로 분석)
+docker-compose exec backtest uv run python -m src.backtest.backtest --symbol BTCUSDT --period 350 --tick_count 150 --n 100 --strategy time_based_average
 ```
 
 ## 출력 예시

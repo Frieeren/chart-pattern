@@ -1,9 +1,5 @@
 """
 알고리즘 백테스팅 스크립트
-
-사용법:
-    python -m src.backtest.backtest --symbol BTCUSDT --period 300 --tick_count 12 --n 100 --strategy simple
-    python -m src.backtest.backtest --symbol BTCUSDT --period 300 --tick_count 12 --n 100 --strategy price_analysis
 """
 
 import argparse
@@ -228,8 +224,8 @@ def test_single_pattern(
 
 def run_backtest(
   symbol: str,
-  period: int,
-  tick_count: int = 12,
+  period: int = 350,
+  tick_count: int = 150,
   n: int = 100,
   algorithm: SimilarityAlgorithm | None = None,
   evaluation_strategy: EvaluationStrategy | None = None,
@@ -239,8 +235,8 @@ def run_backtest(
 
     Args:
       symbol: 심볼 (예: BTCUSDT)
-      period: 입력 패턴의 틱 개수
-      tick_count: 이후 판단할 틱 개수 (기본값: 12)
+      period: 입력 패턴의 틱 개수 (기본값: 350)
+      tick_count: 이후 판단할 틱 개수 (기본값: 150)
       n: 시점 개수 (기본값: 100)
       algorithm: 사용할 알고리즘 (기본값: CandleOnlyAlgorithm)
       evaluation_strategy: 평가 전략 (기본값: SimpleMajorityStrategy)
@@ -304,13 +300,13 @@ def main():
     "--symbol", type=str, required=True, help="심볼 (예: BTCUSDT)"
   )
   parser.add_argument(
-    "--period", type=int, required=True, help="입력 패턴의 틱 개수"
+    "--period", type=int, default=350, help="입력 패턴의 틱 개수 (기본값: 350)"
   )
   parser.add_argument(
     "--tick_count",
     type=int,
-    default=12,
-    help="이후 판단할 틱 개수 (기본값: 12)",
+    default=150,
+    help="이후 판단할 틱 개수 (기본값: 150)",
   )
   parser.add_argument(
     "--n", type=int, default=100, help="무작위 시점 개수 (기본값: 100)"
