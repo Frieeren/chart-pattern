@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Tuple
+from typing import Dict, List, Tuple
 
 import pandas as pd
 
@@ -33,6 +33,8 @@ class EvaluationStrategy(ABC):
     down_count: int,
     up_price_changes: List[float] | None = None,
     down_price_changes: List[float] | None = None,
+    up_price_changes_by_tick: Dict[int, List[float]] | None = None,
+    down_price_changes_by_tick: Dict[int, List[float]] | None = None,
   ) -> None:
     """
     백테스팅 결과를 출력합니다.
@@ -45,6 +47,8 @@ class EvaluationStrategy(ABC):
       down_count: 하락 개수
       up_price_changes: 상승 패턴들의 가격 변동률 리스트 (선택)
       down_price_changes: 하락 패턴들의 가격 변동률 리스트 (선택)
+      up_price_changes_by_tick: 틱 시점별 상승 패턴 가격 변동률 딕셔너리 (선택)
+      down_price_changes_by_tick: 틱 시점별 하락 패턴 가격 변동률 딕셔너리 (선택)
     """
     pass
 

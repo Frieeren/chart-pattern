@@ -1,9 +1,9 @@
 """
-가격 변동률 분석 평가 전략 - 방향에 따른 평균 변동률 계산
+평가 전략 - 상승/하락 개수를 확률로 변환 및 출력
 """
 
 import logging
-from typing import List, Tuple
+from typing import Dict, List, Tuple
 
 import pandas as pd
 
@@ -12,14 +12,23 @@ from src.backtest.evaluation_strategy_interface import EvaluationStrategy
 logger = logging.getLogger(__name__)
 
 
-class PriceAnalysisStrategy(EvaluationStrategy):
-  """가격 변동률 분석 전략 - 상승/하락 패턴의 평균 변동률을 계산"""
+class SimpleMajorityStrategy(EvaluationStrategy):
+  """단순 다수결 전략 - 상승/하락 중 많은 쪽을 선택하고 비율을 확률로"""
 
   def evaluate(self, up_count: int, down_count: int) -> Tuple[str, float]:
     """
     상승/하락 중 많은 쪽을 선택하고, 그 비율을 확률로 반환합니다.
 
     예: 상승 7개, 하락 3개 -> ('up', 0.7)
+
+    Args:
+      up_count: 상승 개수
+      down_count: 하락 개수
+
+    Returns:
+      (방향, 확률) 튜플
+      - 방향: 'up' 또는 'down'
+      - 확률: 0.0 ~ 1.0 사이의 값
     """
     total = up_count + down_count
     if total == 0:
@@ -41,37 +50,30 @@ class PriceAnalysisStrategy(EvaluationStrategy):
     down_count: int,
     up_price_changes: List[float] | None = None,
     down_price_changes: List[float] | None = None,
+    up_price_changes_by_tick: Dict[int, List[float]] | None = None,
+    down_price_changes_by_tick: Dict[int, List[float]] | None = None,
   ) -> None:
-    """결과를 출력합니다 (평균 가격 변동률 포함)."""
+    """결과를 출력합니다."""
+    logger.info(f"타겟 패턴: {target_pattern.index[0]} ~ {target_pattern.index[-1]}")
+    logger.info(f"유사도 계산 완료: {len(similarities)}개")
+
+    # 상위 10개 출력
+    top_n = min(10, len(similarities))
+    top_results = similarities[:top_n]
+    logger.info(f"\n상위 {len(top_results)}개 후보:")
+    for i, (start_time, sim, end_idx) in enumerate(top_results, 1):
+      logger.info(f"{i}. {start_time}, 유사도: {sim:.4f}")
+
     direction, probability = self.evaluate(up_count, down_count)
     prob_percent = probability * 100
 
-    logger.info(f"\n[{pattern_name}] 결과: 상승 {up_count}개, 하락 {down_count}개")
-
-    # 상승 패턴의 평균 변동률 계산
-    if up_price_changes and len(up_price_changes) > 0:
-      avg_up_change = sum(up_price_changes) / len(up_price_changes)
-      logger.info(
-        f"[{pattern_name}] 상승 {up_count}개 → 평균 {avg_up_change:+.2f}% 상승"
-      )
-    else:
-      avg_up_change = 0.0
-
-    # 하락 패턴의 평균 변동률 계산
-    if down_price_changes and len(down_price_changes) > 0:
-      avg_down_change = sum(down_price_changes) / len(down_price_changes)
-      logger.info(
-        f"[{pattern_name}] 하락 {down_count}개 → 평균 {avg_down_change:+.2f}% 하락"
-      )
-    else:
-      avg_down_change = 0.0
-
+    logger.info(f"\n결과: 상승 {up_count}개, 하락 {down_count}개")
     if direction == "up":
-      logger.info(f"[{pattern_name}] 예측: 상승 {prob_percent:.1f}%")
+      logger.info(f"평가 결과: 상승 {prob_percent:.1f}% (하락 {100-prob_percent:.1f}%)")
     elif direction == "down":
-      logger.info(f"[{pattern_name}] 예측: 하락 {prob_percent:.1f}%")
+      logger.info(f"평가 결과: 하락 {prob_percent:.1f}% (상승 {100-prob_percent:.1f}%)")
     else:
-      logger.info(f"[{pattern_name}] 예측: 중립 (확률: {prob_percent:.1f}%)")
+      logger.info(f"평가 결과: 중립 (확률: {prob_percent:.1f}%)")
 
   def output_summary(
     self,
@@ -98,5 +100,4 @@ class PriceAnalysisStrategy(EvaluationStrategy):
     else:
       logger.info(f"전체 예측: 중립 (확률: {prob_percent:.1f}%)")
     logger.info(f"{'='*60}")
-
 

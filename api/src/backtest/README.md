@@ -62,6 +62,7 @@ uv run python -m src.backtest.backtest --symbol BTCUSDT --period 300 --tick_coun
 - `--strategy` (선택, 기본값: simple): 평가 전략
   - `simple`: 기본 다수결 전략
   - `price_analysis`: 가격 변동률 분석 전략 (평균 상승/하락률 계산)
+  - `time_based_average`: 시간 단위 평균 경로 분석 전략 (여러 틱 시점별 평균 변동률)
 
 ### 실행 예시
 
@@ -73,6 +74,9 @@ docker-compose exec backtest uv run python -m src.backtest.backtest --symbol BTC
 
 # ETHUSDT, 200틱 패턴, 24틱 후 방향 예측, 50개 시점 (가격 변동률 분석)
 docker-compose exec backtest uv run python -m src.backtest.backtest --symbol ETHUSDT --period 200 --tick_count 24 --n 50 --strategy price_analysis
+
+# BTCUSDT, 300틱 패턴, 60틱 후 방향 예측, 100개 시점 (시간 단위 평균 경로 분석)
+docker-compose exec backtest uv run python -m src.backtest.backtest --symbol BTCUSDT --period 300 --tick_count 60 --n 100 --strategy time_based_average
 ```
 
 #### 로컬에서 실행
@@ -160,6 +164,21 @@ result = run_backtest(
 - 예: 상승 60개 → 평균 +2.5% 상승
 - 예: 하락 40개 → 평균 -1.8% 하락
 
+### `TimeBasedAverageStrategy` 전략
+- 상승/하락 중 많은 쪽을 선택하고 비율을 확률로 반환
+- **시간 단위 평균 경로 분석** - 여러 틱 시점별 평균 가격 변동률 출력
+- 0부터 `tick_count`까지 10단위로 모든 틱 시점의 평균을 계산
+- 예: `tick_count=25`인 경우 → 10틱, 20틱 후 평균 계산
+- 예: `tick_count=60`인 경우 → 10, 20, 30, 40, 50, 60틱 후 평균 계산
+- 예: 상승 60개의 평균 경로
+  - 10틱 후: +1.2%
+  - 20틱 후: +2.1%
+  - 30틱 후: +2.8%
+- 예: 하락 40개의 평균 경로
+  - 10틱 후: -0.8%
+  - 20틱 후: -1.5%
+  - 30틱 후: -2.1%
+
 ## 확장 가능성
 
 ### 평가 전략 추가
@@ -170,19 +189,23 @@ result = run_backtest(
 from src.backtest.evaluation_strategy_interface import EvaluationStrategy
 
 class MyCustomEvaluationStrategy(EvaluationStrategy):
-    def evaluate(self, up_count, down_count):
-        # 커스텀 평가 로직
-        return (direction, probability)
-    
-    def output_results(self, pattern_name, target_pattern, similarities, 
-                      up_count, down_count):
-        # 커스텀 개별 패턴 출력 로직
-        pass
-    
-    def output_summary(self, results):
-        # 커스텀 전체 요약 출력 로직
-        pass
+  def evaluate(self, up_count, down_count):
+    # 커스텀 평가 로직
+    return (direction, probability)
+  
+  def output_results(self, pattern_name, target_pattern, similarities, 
+                    up_count, down_count,
+                    up_price_changes=None, down_price_changes=None,
+                    up_price_changes_by_tick=None, down_price_changes_by_tick=None):
+    # 커스텀 개별 패턴 출력 로직
+    pass
+  
+  def output_summary(self, results):
+    # 커스텀 전체 요약 출력 로직
+    pass
 ```
+
+전략 파일은 `src/backtest/strategies/` 폴더에 위치하며, `strategies/__init__.py`에서 export해야 합니다.
 
 ## 주의사항
 

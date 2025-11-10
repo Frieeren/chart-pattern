@@ -9,17 +9,20 @@
 import argparse
 import logging
 import random
-from typing import List, Tuple
+from typing import Dict, List, Tuple
 
 import pandas as pd
 from sqlalchemy import text
 
 from src.backtest.algorithm_interface import SimilarityAlgorithm
 from src.backtest.candleonly_algorithm import CandleOnlyAlgorithm
-from src.backtest.evaluation_strategy import SimpleMajorityStrategy
 from src.backtest.evaluation_strategy_interface import EvaluationStrategy
-from src.backtest.price_analysis_strategy import PriceAnalysisStrategy
-from src.backtest.random_strategy import RandomStrategy
+from src.backtest.strategies import (
+  PriceAnalysisStrategy,
+  RandomStrategy,
+  SimpleMajorityStrategy,
+  TimeBasedAverageStrategy,
+)
 from src.constants.symbol_table_map import get_table_name_by_symbol
 from src.db.session import SessionLocal
 
@@ -156,6 +159,12 @@ def test_single_pattern(
   down_count = 0
   up_price_changes: List[float] = []
   down_price_changes: List[float] = []
+  # 여러 틱 시점별 가격 변동률 수집 (시간 단위 평균 경로 분석용)
+  up_price_changes_by_tick: Dict[int, List[float]] = {}
+  down_price_changes_by_tick: Dict[int, List[float]] = {}
+  
+  # 분석할 틱 시점들: 0부터 tick_count까지 10단위로 생성 (10, 20, 30, ...)
+  tick_points = [tick for tick in range(10, tick_count + 1, 10)]
 
   for start_time, _, end_idx in top_results:
     try:
@@ -171,6 +180,23 @@ def test_single_pattern(
       price_change = ((end_price - start_price) / start_price) * 100  # 퍼센트
 
       direction = calculate_price_direction(all_data, start_idx, tick_count)
+      
+      # 여러 틱 시점별 가격 변동률 계산 (10단위로)
+      for tick_point in tick_points:
+        tick_end_idx = start_idx + tick_point - 1
+        if tick_end_idx < len(all_data):
+          tick_end_price = all_data["Close"].iloc[tick_end_idx]
+          tick_price_change = ((tick_end_price - start_price) / start_price) * 100
+          
+          if direction == "up":
+            if tick_point not in up_price_changes_by_tick:
+              up_price_changes_by_tick[tick_point] = []
+            up_price_changes_by_tick[tick_point].append(tick_price_change)
+          else:
+            if tick_point not in down_price_changes_by_tick:
+              down_price_changes_by_tick[tick_point] = []
+            down_price_changes_by_tick[tick_point].append(tick_price_change)
+      
       if direction == "up":
         up_count += 1
         up_price_changes.append(price_change)
@@ -190,6 +216,8 @@ def test_single_pattern(
     down_count=down_count,
     up_price_changes=up_price_changes if up_price_changes else None,
     down_price_changes=down_price_changes if down_price_changes else None,
+    up_price_changes_by_tick=up_price_changes_by_tick if up_price_changes_by_tick else None,
+    down_price_changes_by_tick=down_price_changes_by_tick if down_price_changes_by_tick else None,
   )
 
   # 반환값을 위해 평가
@@ -291,7 +319,7 @@ def main():
     "--strategy",
     type=str,
     default="simple",
-    choices=["simple", "price_analysis"],
+    choices=["simple", "price_analysis", "time_based_average"],
     help="평가 전략 (기본값: simple)",
   )
   args = parser.parse_args()
@@ -301,6 +329,8 @@ def main():
     evaluation_strategy = SimpleMajorityStrategy()
   elif args.strategy == "price_analysis":
     evaluation_strategy = PriceAnalysisStrategy()
+  elif args.strategy == "time_based_average":
+    evaluation_strategy = TimeBasedAverageStrategy()
   else:
     evaluation_strategy = SimpleMajorityStrategy()
 
