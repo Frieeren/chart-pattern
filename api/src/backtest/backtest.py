@@ -94,6 +94,105 @@ def calculate_price_direction(
   return "up" if end_price > start_price else "down"
 
 
+def calculate_similarities(
+  target_pattern: pd.DataFrame,
+  candidate_time_points: List[pd.Timestamp],
+  target_start_time: pd.Timestamp,
+  all_data: pd.DataFrame,
+  session,
+  table_name: str,
+  period: int,
+  algorithm: SimilarityAlgorithm,
+) -> List[Tuple[pd.Timestamp, float, int]]:
+  """후보 패턴들과의 유사도를 계산합니다."""
+  similarities: List[Tuple[pd.Timestamp, float, int]] = []
+
+  for candidate_start_time in candidate_time_points:
+    if candidate_start_time == target_start_time:
+      continue  # 타겟 제외
+    candidate_pattern = get_pattern_data(
+      session, table_name, candidate_start_time, period
+    )
+
+    if len(candidate_pattern) < period:
+      continue
+
+    similarity = algorithm.calculate_similarity(target_pattern, candidate_pattern)
+    candidate_end_idx = all_data.index.get_loc(candidate_pattern.index[-1])
+    similarities.append((candidate_start_time, similarity, candidate_end_idx))
+
+  # 유사도 순으로 정렬 (낮을수록 유사함)
+  similarities.sort(key=lambda x: x[1])
+  return similarities
+
+
+def calculate_price_changes(
+  top_results: List[Tuple[pd.Timestamp, float, int]],
+  all_data: pd.DataFrame,
+  tick_count: int,
+) -> Tuple[int, int, List[float], List[float], Dict[int, List[float]], Dict[int, List[float]]]:
+  """상위 결과들의 가격 변동률을 계산합니다."""
+  up_count = 0
+  down_count = 0
+  up_price_changes: List[float] = []
+  down_price_changes: List[float] = []
+  up_price_changes_by_tick: Dict[int, List[float]] = {}
+  down_price_changes_by_tick: Dict[int, List[float]] = {}
+
+  # 분석할 틱 시점들: 0부터 tick_count까지 10단위로 생성 (10, 20, 30, ...)
+  tick_points = [tick for tick in range(10, tick_count + 1, 10)]
+
+  for start_time, _, end_idx in top_results:
+    try:
+      # 패턴 끝 시점 이후 tick_count 틱의 가격 변동률 계산
+      start_idx = end_idx + 1
+      end_idx_price = start_idx + tick_count - 1
+
+      if end_idx_price >= len(all_data):
+        raise ValueError("데이터가 부족합니다.")
+
+      start_price = all_data["Close"].iloc[start_idx]
+      end_price = all_data["Close"].iloc[end_idx_price]
+      price_change = ((end_price - start_price) / start_price) * 100  # 퍼센트
+
+      direction = calculate_price_direction(all_data, start_idx, tick_count)
+
+      # 여러 틱 시점별 가격 변동률 계산 (10단위로)
+      for tick_point in tick_points:
+        tick_end_idx = start_idx + tick_point - 1
+        if tick_end_idx < len(all_data):
+          tick_end_price = all_data["Close"].iloc[tick_end_idx]
+          tick_price_change = ((tick_end_price - start_price) / start_price) * 100
+
+          if direction == "up":
+            if tick_point not in up_price_changes_by_tick:
+              up_price_changes_by_tick[tick_point] = []
+            up_price_changes_by_tick[tick_point].append(tick_price_change)
+          else:
+            if tick_point not in down_price_changes_by_tick:
+              down_price_changes_by_tick[tick_point] = []
+            down_price_changes_by_tick[tick_point].append(tick_price_change)
+
+      if direction == "up":
+        up_count += 1
+        up_price_changes.append(price_change)
+      else:
+        down_count += 1
+        down_price_changes.append(price_change)
+    except (ValueError, KeyError) as e:
+      logger.warning(f"시점 {start_time}에서 방향 판단 실패: {e}")
+      continue
+
+  return (
+    up_count,
+    down_count,
+    up_price_changes,
+    down_price_changes,
+    up_price_changes_by_tick,
+    down_price_changes_by_tick,
+  )
+
+
 def test_single_pattern(
   target_start_time: pd.Timestamp,
   target_pattern: pd.DataFrame,
@@ -126,82 +225,31 @@ def test_single_pattern(
     Returns:
       (상승 개수, 하락 개수, (방향, 확률)) 튜플
     """
-  # 각 후보 패턴과의 유사도 계산 (타겟 제외)
-  similarities: List[Tuple[pd.Timestamp, float, int]] = []
-
-  for candidate_start_time in candidate_time_points:
-    if candidate_start_time == target_start_time:
-      continue  # 타겟 제외
-    candidate_pattern = get_pattern_data(
-      session, table_name, candidate_start_time, period
-    )
-
-    if len(candidate_pattern) < period:
-      continue
-
-    similarity = algorithm.calculate_similarity(target_pattern, candidate_pattern)
-    candidate_end_idx = all_data.index.get_loc(candidate_pattern.index[-1])
-    similarities.append((candidate_start_time, similarity, candidate_end_idx))
-
-  # 유사도 순으로 정렬 (낮을수록 유사함)
-  similarities.sort(key=lambda x: x[1])
+  # 각 후보 패턴과의 유사도 계산
+  similarities = calculate_similarities(
+    target_pattern=target_pattern,
+    candidate_time_points=candidate_time_points,
+    target_start_time=target_start_time,
+    all_data=all_data,
+    session=session,
+    table_name=table_name,
+    period=period,
+    algorithm=algorithm,
+  )
 
   # 상위 10개 선택 (또는 가능한 만큼)
   top_n = min(10, len(similarities))
   top_results = similarities[:top_n]
 
   # 상위 10개의 상승/하락 판단 및 가격 변동률 계산
-  up_count = 0
-  down_count = 0
-  up_price_changes: List[float] = []
-  down_price_changes: List[float] = []
-  # 여러 틱 시점별 가격 변동률 수집 (시간 단위 평균 경로 분석용)
-  up_price_changes_by_tick: Dict[int, List[float]] = {}
-  down_price_changes_by_tick: Dict[int, List[float]] = {}
-  
-  # 분석할 틱 시점들: 0부터 tick_count까지 10단위로 생성 (10, 20, 30, ...)
-  tick_points = [tick for tick in range(10, tick_count + 1, 10)]
-
-  for start_time, _, end_idx in top_results:
-    try:
-      # 패턴 끝 시점 이후 tick_count 틱의 가격 변동률 계산
-      start_idx = end_idx + 1
-      end_idx_price = start_idx + tick_count - 1
-      
-      if end_idx_price >= len(all_data):
-        raise ValueError("데이터가 부족합니다.")
-      
-      start_price = all_data["Close"].iloc[start_idx]
-      end_price = all_data["Close"].iloc[end_idx_price]
-      price_change = ((end_price - start_price) / start_price) * 100  # 퍼센트
-
-      direction = calculate_price_direction(all_data, start_idx, tick_count)
-      
-      # 여러 틱 시점별 가격 변동률 계산 (10단위로)
-      for tick_point in tick_points:
-        tick_end_idx = start_idx + tick_point - 1
-        if tick_end_idx < len(all_data):
-          tick_end_price = all_data["Close"].iloc[tick_end_idx]
-          tick_price_change = ((tick_end_price - start_price) / start_price) * 100
-          
-          if direction == "up":
-            if tick_point not in up_price_changes_by_tick:
-              up_price_changes_by_tick[tick_point] = []
-            up_price_changes_by_tick[tick_point].append(tick_price_change)
-          else:
-            if tick_point not in down_price_changes_by_tick:
-              down_price_changes_by_tick[tick_point] = []
-            down_price_changes_by_tick[tick_point].append(tick_price_change)
-      
-      if direction == "up":
-        up_count += 1
-        up_price_changes.append(price_change)
-      else:
-        down_count += 1
-        down_price_changes.append(price_change)
-    except (ValueError, KeyError) as e:
-      logger.warning(f"시점 {start_time}에서 방향 판단 실패: {e}")
-      continue
+  (
+    up_count,
+    down_count,
+    up_price_changes,
+    down_price_changes,
+    up_price_changes_by_tick,
+    down_price_changes_by_tick,
+  ) = calculate_price_changes(top_results, all_data, tick_count)
 
   # 평가 전략으로 결과 평가 및 출력
   evaluation_strategy.output_results(
@@ -339,7 +387,7 @@ def main():
   )
 
   prob_percent = probability * 100
-  print(f"\n최종 결과:")
+  print("\n최종 결과:")
   print(f"상승: {up_count}개, 하락: {down_count}개")
   if direction == "up":
     print(f"예측: 상승 {prob_percent:.1f}%")

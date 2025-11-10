@@ -24,6 +24,46 @@ class TimeBasedAverageStrategy(EvaluationStrategy):
     # output_results에서 전달받은 데이터의 키를 기반으로 출력
     self.tick_points = tick_points
 
+  def _output_top_candidates(
+    self, similarities: List[Tuple[pd.Timestamp, float, int]]
+  ) -> None:
+    """상위 10개 후보를 출력합니다."""
+    top_n = min(10, len(similarities))
+    top_results = similarities[:top_n]
+    logger.info(f"\n상위 {len(top_results)}개 후보:")
+    for i, (start_time, sim, end_idx) in enumerate(top_results, 1):
+      logger.info(f"{i}. {start_time}, 유사도: {sim:.4f}")
+
+  def _output_time_based_average_path(
+    self, pattern_name: str, count: int, price_changes_by_tick: Dict[int, List[float]], direction: str
+  ) -> None:
+    """시간 단위 평균 경로를 출력합니다."""
+    if count > 0 and price_changes_by_tick:
+      direction_label = "상승" if direction == "up" else "하락"
+      logger.info(f"\n[{pattern_name}] {direction_label} {count}개의 평균 경로:")
+      for tick in sorted(price_changes_by_tick.keys()):
+        changes = price_changes_by_tick[tick]
+        if len(changes) > 0:
+          avg_change = sum(changes) / len(changes)
+          logger.info(f"  - {tick}틱 후: {avg_change:+.2f}%")
+
+  def _output_average_price_changes(
+    self, pattern_name: str, up_count: int, down_count: int,
+    up_price_changes: List[float] | None, down_price_changes: List[float] | None
+  ) -> None:
+    """평균 가격 변동률을 출력합니다."""
+    if up_price_changes and len(up_price_changes) > 0:
+      avg_up_change = sum(up_price_changes) / len(up_price_changes)
+      logger.info(
+        f"[{pattern_name}] 상승 {up_count}개 → 평균 {avg_up_change:+.2f}% 상승"
+      )
+
+    if down_price_changes and len(down_price_changes) > 0:
+      avg_down_change = sum(down_price_changes) / len(down_price_changes)
+      logger.info(
+        f"[{pattern_name}] 하락 {down_count}개 → 평균 {avg_down_change:+.2f}% 하락"
+      )
+
   def evaluate(self, up_count: int, down_count: int) -> Tuple[str, float]:
     """
     상승/하락 중 많은 쪽을 선택하고, 그 비율을 확률로 반환합니다.
@@ -66,49 +106,25 @@ class TimeBasedAverageStrategy(EvaluationStrategy):
     logger.info(f"유사도 계산 완료: {len(similarities)}개")
 
     # 상위 10개 출력
-    top_n = min(10, len(similarities))
-    top_results = similarities[:top_n]
-    logger.info(f"\n상위 {len(top_results)}개 후보:")
-    for i, (start_time, sim, end_idx) in enumerate(top_results, 1):
-      logger.info(f"{i}. {start_time}, 유사도: {sim:.4f}")
+    self._output_top_candidates(similarities)
 
     direction, probability = self.evaluate(up_count, down_count)
     prob_percent = probability * 100
 
     logger.info(f"\n[{pattern_name}] 결과: 상승 {up_count}개, 하락 {down_count}개")
 
-    # 상승 패턴의 시간 단위 평균 경로 출력
-    if up_count > 0 and up_price_changes_by_tick:
-      logger.info(f"\n[{pattern_name}] 상승 {up_count}개의 평균 경로:")
-      # 전달받은 데이터의 키를 기반으로 정렬하여 출력
-      for tick in sorted(up_price_changes_by_tick.keys()):
-        changes = up_price_changes_by_tick[tick]
-        if len(changes) > 0:
-          avg_change = sum(changes) / len(changes)
-          logger.info(f"  - {tick}틱 후: {avg_change:+.2f}%")
+    # 상승/하락 패턴의 시간 단위 평균 경로 출력
+    self._output_time_based_average_path(
+      pattern_name, up_count, up_price_changes_by_tick or {}, "up"
+    )
+    self._output_time_based_average_path(
+      pattern_name, down_count, down_price_changes_by_tick or {}, "down"
+    )
 
-    # 하락 패턴의 시간 단위 평균 경로 출력
-    if down_count > 0 and down_price_changes_by_tick:
-      logger.info(f"\n[{pattern_name}] 하락 {down_count}개의 평균 경로:")
-      # 전달받은 데이터의 키를 기반으로 정렬하여 출력
-      for tick in sorted(down_price_changes_by_tick.keys()):
-        changes = down_price_changes_by_tick[tick]
-        if len(changes) > 0:
-          avg_change = sum(changes) / len(changes)
-          logger.info(f"  - {tick}틱 후: {avg_change:+.2f}%")
-
-    # 기존 평균 변동률도 출력 (최종 틱 시점 기준)
-    if up_price_changes and len(up_price_changes) > 0:
-      avg_up_change = sum(up_price_changes) / len(up_price_changes)
-      logger.info(
-        f"[{pattern_name}] 상승 {up_count}개 → 평균 {avg_up_change:+.2f}% 상승"
-      )
-
-    if down_price_changes and len(down_price_changes) > 0:
-      avg_down_change = sum(down_price_changes) / len(down_price_changes)
-      logger.info(
-        f"[{pattern_name}] 하락 {down_count}개 → 평균 {avg_down_change:+.2f}% 하락"
-      )
+    # 평균 변동률 출력 (최종 틱 시점 기준)
+    self._output_average_price_changes(
+      pattern_name, up_count, down_count, up_price_changes, down_price_changes
+    )
 
     if direction == "up":
       logger.info(f"[{pattern_name}] 예측: 상승 {prob_percent:.1f}%")
