@@ -15,6 +15,15 @@
 
 ### Docker로 실행 (권장)
 
+#### 방법 1: 실행 후 자동 제거 (권장)
+
+```bash
+# 컨테이너를 생성해 실행하고, 종료 시 자동으로 제거됩니다
+docker-compose run --rm backtest uv run python -m src.backtest.backtest --symbol BTCUSDT --period 350 --tick_count 150 --n 100
+```
+
+#### 방법 2: 컨테이너를 유지하며 실행
+
 #### 1. Docker Compose로 백테스팅 컨테이너 시작
 
 ```bash
@@ -26,13 +35,16 @@ docker-compose up -d backtest
 ```bash
 # 기본 실행 (단일 패턴)
 docker-compose exec backtest uv run python -m src.backtest.backtest --symbol BTCUSDT --period 350 --tick_count 150 --n 100
-
 ```
 
-#### 3. 컨테이너 종료 (선택사항)
+#### 3. 컨테이너 종료 및 제거 (선택사항)
 
 ```bash
+# 컨테이너 중지
 docker-compose stop backtest
+
+# 컨테이너 제거
+docker-compose rm -f backtest
 ```
 
 ### 로컬에서 실행
@@ -69,15 +81,20 @@ uv run python -m src.backtest.backtest --symbol BTCUSDT --period 350 --tick_coun
 #### Docker로 실행
 
 ```bash
+# 방법 1: 실행 후 자동 제거 (권장) - 컨테이너가 자동으로 제거됩니다
 # 기본 값은 350틱 패턴, 150틱 후 방향 예측, 100개 시점
 # BTCUSDT(기본 전략)
-docker-compose exec backtest uv run python -m src.backtest.backtest --symbol BTCUSDT --period 350 --tick_count 150 --n 100
+docker-compose run --rm backtest uv run python -m src.backtest.backtest --symbol BTCUSDT --period 350 --tick_count 150 --n 100
 
 # ETHUSDT(가격 변동률 분석)
-docker-compose exec backtest uv run python -m src.backtest.backtest --symbol ETHUSDT --period 350 --tick_count 150 --n 100 --strategy price_analysis
+docker-compose run --rm backtest uv run python -m src.backtest.backtest --symbol ETHUSDT --period 350 --tick_count 150 --n 100 --strategy price_analysis
 
 # BTCUSDT(시간 단위 평균 경로 분석)
-docker-compose exec backtest uv run python -m src.backtest.backtest --symbol BTCUSDT --period 350 --tick_count 150 --n 100 --strategy time_based_average
+docker-compose run --rm backtest uv run python -m src.backtest.backtest --symbol BTCUSDT --period 350 --tick_count 150 --n 100 --strategy time_based_average
+
+# 방법 2: 컨테이너를 유지하며 실행 (컨테이너가 계속 실행됨)
+# docker-compose up -d backtest 후 실행
+docker-compose exec backtest uv run python -m src.backtest.backtest --symbol BTCUSDT --period 350 --tick_count 150 --n 100
 ```
 
 ## 출력 예시

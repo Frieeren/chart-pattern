@@ -45,6 +45,16 @@ class PriceAnalysisStrategy(EvaluationStrategy):
     down_price_changes_by_tick: Dict[int, List[float]] | None = None,
   ) -> None:
     """결과를 출력합니다 (평균 가격 변동률 포함)."""
+    logger.info(f"타겟 패턴: {target_pattern.index[0]} ~ {target_pattern.index[-1]}")
+    logger.info(f"유사도 계산 완료: {len(similarities)}개")
+
+    # 상위 10개 출력
+    top_n = min(10, len(similarities))
+    top_results = similarities[:top_n]
+    logger.info(f"\n상위 {len(top_results)}개 후보:")
+    for i, (start_time, sim, end_idx) in enumerate(top_results, 1):
+      logger.info(f"{i}. {start_time}, 유사도: {sim:.4f}")
+
     direction, probability = self.evaluate(up_count, down_count)
     prob_percent = probability * 100
 
