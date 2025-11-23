@@ -134,9 +134,136 @@ docker-compose exec backtest uv run python -m src.backtest.backtest --symbol BTC
 6. **확률 계산**: 상승/하락 개수를 기반으로 확률을 계산합니다
    - 현재는 `SimpleMajorityStrategy` 사용 (단순 다수결)
 
-## 알고리즘 교체
+## 알고리즘 인터페이스
 
-다른 유사도 알고리즘을 사용하려면 `SimilarityAlgorithm` 인터페이스를 구현한 클래스를 만들어 `run_backtest` 함수의 `algorithm` 파라미터로 전달하면 됩니다.
+### Input
+- `target_pattern`: 타겟 패턴 (pandas.DataFrame)
+- `candidate_pattern`: 후보 패턴 (pandas.DataFrame)
+- **주의**: `target_pattern`과 `candidate_pattern`의 행 개수(len)가 같아야 합니다.
+
+### pandas.DataFrame 구조
+- `"Open"`: 시가 (float)
+- `"High"`: 고가 (float)
+- `"Low"`: 저가 (float)
+- `"Close"`: 종가 (float)
+- **논의**: Close만 사용하는 방향이면 단일 값 사용하는 float array
+
+### Output
+- `float`: 유사도 점수 (낮을수록 유사함)
+
+## 새로운 Service 알고리즘 추가하기
+
+`ChartSimilarityService`와 같은 새로운 Service를 추가하여 백테스팅에서 사용하려면 다음 단계를 따르세요.
+
+### 1. Service 클래스 생성
+
+`src/services/` 디렉토리에 새로운 Service 클래스를 생성합니다. Service는 `calculate_similarity` 메서드를 가져야 합니다.
+
+예시: `src/services/my_similarity_service.py`
+
+```python
+import pandas as pd
+
+class MySimilarityService:
+    """새로운 유사도 계산 서비스"""
+    
+    def calculate_similarity(
+        self, 
+        target_pattern: pd.DataFrame, 
+        candidate_pattern: pd.DataFrame
+    ) -> float:
+        """
+        두 패턴 간의 유사도를 계산합니다.
+        
+        Args:
+            target_pattern: 타겟 패턴 데이터프레임
+            candidate_pattern: 후보 패턴 데이터프레임
+            
+        Returns:
+            유사도 점수 (낮을수록 유사함)
+        """
+        # 유사도 계산 로직 구현
+        # ...
+        return similarity_score
+```
+
+### 2. backtest.py 수정
+
+`src/backtest/backtest.py` 파일을 수정하여 새로운 알고리즘을 추가합니다.
+
+#### 2-1. Import 추가
+
+```python
+from src.services.my_similarity_service import MySimilarityService
+```
+
+#### 2-2. `--algorithm` choices에 추가
+
+```python
+parser.add_argument(
+  "--algorithm",
+  type=str,
+  default="service",
+  choices=["service", "my_algorithm"],  # 새 알고리즘 이름 추가
+  help="유사도 알고리즘 (기본값: service - ChartSimilarityService 사용)",
+)
+```
+
+#### 2-3. 알고리즘 생성 로직 추가
+
+```python
+# 알고리즘 생성
+if args.algorithm == "service":
+  # ChartSimilarityService 사용
+  service = ChartSimilarityService()
+  algorithm = ServiceSimilarityAlgorithm(service)
+elif args.algorithm == "my_algorithm":  # 새 알고리즘 추가
+  # MySimilarityService 사용
+  service = MySimilarityService()
+  algorithm = ServiceSimilarityAlgorithm(service)
+else:
+  # 기본값: ChartSimilarityService
+  service = ChartSimilarityService()
+  algorithm = ServiceSimilarityAlgorithm(service)
+```
+
+### 3. Docker로 실행
+
+새로운 알고리즘을 사용하여 백테스팅을 실행합니다:
+
+```bash
+docker-compose run --rm backtest uv run python -m src.backtest.backtest \
+  --symbol BTCUSDT \
+  --period 350 \
+  --tick_count 150 \
+  --n 100 \
+  --algorithm my_algorithm
+```
+
+### 4. 실행 예시
+
+```bash
+# 기본 알고리즘 (ChartSimilarityService)
+docker-compose run --rm backtest uv run python -m src.backtest.backtest \
+  --symbol BTCUSDT \
+  --period 350 \
+  --tick_count 150 \
+  --n 100 \
+  --algorithm service
+
+# 새로운 알고리즘 (MySimilarityService)
+docker-compose run --rm backtest uv run python -m src.backtest.backtest \
+  --symbol BTCUSDT \
+  --period 350 \
+  --tick_count 150 \
+  --n 100 \
+  --algorithm my_algorithm \
+  --strategy price_analysis
+```
+
+## 알고리즘 교체 (프로그래밍 방식)
+
+프로그래밍 방식으로 다른 유사도 알고리즘을 사용하려면 `SimilarityAlgorithm` 인터페이스를 직접 구현한 클래스를 만들어 `run_backtest` 함수의 `algorithm` 파라미터로 전달하면 됩니다.
 
 예시:
 
