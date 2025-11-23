@@ -41,3 +41,18 @@ services:
       - DB_PORT=${MYSQL_PORT}
       - DB_NAME=${MYSQL_DATABASE}
       - TZ=Asia/Seoul
+
+  backtest:
+    container_name: chart-pattern-backtest
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    environment:
+      - DB_USER=${MYSQL_USER}
+      - DB_PASSWD=${MYSQL_PASSWORD}
+      - DB_HOST=${MYSQL_HOST}
+      - DB_PORT=${MYSQL_PORT}
+      - DB_NAME=${MYSQL_DATABASE}
+      - TZ=Asia/Seoul
+    # 백테스팅은 명령어로 실행 (기본 CMD는 무시됨)
+    command: tail -f /dev/null
