@@ -1,0 +1,14 @@
+version: 2
+enable-beta-ecosystems: true
+updates:
+  - package-ecosystem: "npm"
+    directory: "/web"
+    schedule:
+      interval: "weekly"
+      timezone: "Asia/Seoul"
+    open-pull-requests-limit: 5
+    allow:
+      - dependency-name: "@team-frieeren/*"
+    ignore:
+      - dependency-name: "@team-frieeren/*"
+        update-types: ["version-update:semver-major"]
